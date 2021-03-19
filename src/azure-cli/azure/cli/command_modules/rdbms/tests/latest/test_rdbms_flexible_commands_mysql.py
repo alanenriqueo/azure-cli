@@ -95,61 +95,62 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
         self._test_flexible_server_update_scale_down('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
+    @pytest.mark.order(8)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_update_scale_down'])
     def test_mysql_flexible_server_update_mmw(self):
         self._test_flexible_server_update_mmw('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(8)
+    @pytest.mark.order(9)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_update_mmw'])
     def test_mysql_flexible_server_update_tag(self):
         self._test_flexible_server_update_tag('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(9)
+    @pytest.mark.order(10)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_update_tag'])
     def test_mysql_flexible_server_restart(self):
         self._test_flexible_server_restart('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(10)
+    @pytest.mark.order(11)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_restart'])
     def test_mysql_flexible_server_stop(self):
         self._test_flexible_server_stop('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(11)
+    @pytest.mark.order(12)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_stop'])
     def test_mysql_flexible_server_start(self):
         self._test_flexible_server_start('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(12)
+    @pytest.mark.order(13)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_start'])
     def test_mysql_flexible_server_list(self):
         self._test_flexible_server_list('mysql', self.resource_group)
         self._test_flexible_server_connection_string('mysql', self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(13)
+    @pytest.mark.order(14)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_list'])
     def test_mysql_flexible_server_list_skus(self):
         self._test_flexible_server_list_skus('mysql', self.location)
 
     @AllowLargeResponse()
-    @pytest.mark.order(14)
+    @pytest.mark.order(15)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_list_skus'])
     def test_mysql_flexible_server_restore(self):
         self._test_flexible_server_restore('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(15)
+    @pytest.mark.order(16)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_restore'])
     def test_mysql_flexible_server_create_non_default_tiers(self):
         self._test_flexible_server_create_non_default_tiers('mysql', self.resource_group)
 
     @AllowLargeResponse()
-    @pytest.mark.order(16)
+    @pytest.mark.order(17)
     @pytest.mark.depends(on=['MySqlFlexibleServerMgmtScenarioTest::test_mysql_flexible_server_create_non_default_tiers'])
     def test_mysql_flexible_server_delete(self):
         self.cmd('az group delete --name {} --yes --no-wait'.format(self.resource_group))
