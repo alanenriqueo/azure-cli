@@ -114,42 +114,42 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
         self._test_flexible_server_restart('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(10)
+    @pytest.mark.order(11)
     @pytest.mark.dependency(depends=["test_mysql_flexible_server_mgmt_prepare"])
     def test_mysql_flexible_server_stop(self):
         self._test_flexible_server_stop('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(11)
+    @pytest.mark.order(12)
     @pytest.mark.dependency(depends=["test_mysql_flexible_server_mgmt_prepare"])
     def test_mysql_flexible_server_start(self):
         self._test_flexible_server_start('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(12)
+    @pytest.mark.order(13)
     @pytest.mark.dependency(depends=["test_mysql_flexible_server_mgmt_prepare"])
     def test_mysql_flexible_server_list(self):
         self._test_flexible_server_list('mysql', self.resource_group)
         self._test_flexible_server_connection_string('mysql', self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(13)
+    @pytest.mark.order(14)
     def test_mysql_flexible_server_list_skus(self):
         self._test_flexible_server_list_skus('mysql', self.location)
 
     @AllowLargeResponse()
-    @pytest.mark.order(14)
+    @pytest.mark.order(15)
     @pytest.mark.dependency(depends=["test_mysql_flexible_server_mgmt_prepare"])
     def test_mysql_flexible_server_restore(self):
         self._test_flexible_server_restore('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(15)
+    @pytest.mark.order(16)
     def test_mysql_flexible_server_create_non_default_tiers(self):
         self._test_flexible_server_create_non_default_tiers('mysql', self.resource_group)
 
     @AllowLargeResponse()
-    @pytest.mark.order(16)
+    @pytest.mark.order(17)
     @pytest.mark.dependency(depends=["test_mysql_flexible_server_mgmt_prepare"])
     def test_mysql_flexible_server_delete(self):
         self.cmd('az group delete --name {} --yes --no-wait'.format(self.resource_group))
