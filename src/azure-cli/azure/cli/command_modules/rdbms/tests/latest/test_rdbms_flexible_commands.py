@@ -938,7 +938,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         self.assertEqual(show_result_2['delegatedSubnetArguments']['subnetArmResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                             self.get_subscription_id(), resource_group_1, vnet_name_2, 'Subnet' + servers[1][6:]))
+                             self.get_subscription_id(), resource_group_2, vnet_name_2, 'Subnet' + servers[1][6:]))
 
         # delete all servers
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group_2, servers[0]),
