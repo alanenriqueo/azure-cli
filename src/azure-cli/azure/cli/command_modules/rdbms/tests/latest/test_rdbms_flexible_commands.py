@@ -123,8 +123,7 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
             self.cmd('postgres flexible-server show -g {} -n {}'
                      .format(resource_group, self.random_name_1),
                      checks=[JMESPathCheck('sku.tier', 'Burstable'),
-                             JMESPathCheck('sku.name', 'Standard_B1ms'),
-                             JMESPathCheck('availabilityZone', 1)])
+                             JMESPathCheck('sku.name', 'Standard_B1ms')])
 
             self.cmd('postgres flexible-server create -g {} -l {} -n {} --tier MemoryOptimized --sku-name Standard_E2s_v3 --public-access none'
                      .format(resource_group, self.location, self.random_name_2))
