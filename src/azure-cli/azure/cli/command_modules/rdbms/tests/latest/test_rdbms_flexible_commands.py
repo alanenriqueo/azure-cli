@@ -420,7 +420,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
         print(show_result)
         self.assertEqual(show_result['delegatedSubnetArguments']['subnetArmResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                             self.get_subscription_id(), resource_group, 'VNET' + server[6:], 'Subnet' + server[6:]))
+                             self.get_subscription_id(), resource_group, 'Vnet' + server[6:], 'Subnet' + server[6:]))
 
     def _test_flexible_server_vnet_server_update_scale_up(self, database_engine, resource_group, server):
 
