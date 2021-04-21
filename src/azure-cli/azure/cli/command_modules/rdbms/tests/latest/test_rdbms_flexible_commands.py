@@ -229,7 +229,7 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
     def _test_flexible_server_restore(self, database_engine, resource_group, server):
         time.sleep(20 * 60)
         restore_server = 'restore-' + server[:50]
-        restore_time = (datetime.utcnow() - timedelta(minutes=40)).replace(tzinfo=tzutc()).isoformat()
+        restore_time = (datetime.utcnow() - timedelta(minutes=10)).replace(tzinfo=tzutc()).isoformat()
 
         if database_engine == 'postgres':
             self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 2'
@@ -383,7 +383,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
     def _test_flexible_server_high_availability_restore(self, database_engine, resource_group, server):
         time.sleep(40 * 60)
         restore_server = 'restore-' + server[:55]
-        restore_time = (datetime.utcnow() - timedelta(minutes=40)).replace(tzinfo=tzutc()).isoformat()
+        restore_time = (datetime.utcnow() - timedelta(minutes=10)).replace(tzinfo=tzutc()).isoformat()
 
         self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 2'
                  .format(database_engine, resource_group, restore_server, server, restore_time),
@@ -431,7 +431,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
     def _test_flexible_server_vnet_server_restore(self, database_engine, resource_group, server, restore_server):
         time.sleep(40 * 60)
-        restore_time = (datetime.utcnow() - timedelta(minutes=40)).replace(tzinfo=tzutc()).isoformat()
+        restore_time = (datetime.utcnow() - timedelta(minutes=10)).replace(tzinfo=tzutc()).isoformat()
 
         if database_engine == 'postgres':
             self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 1'
