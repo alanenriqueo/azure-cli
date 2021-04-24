@@ -430,8 +430,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                          JMESPathCheck('sku.tier', 'GeneralPurpose')])
 
     def _test_flexible_server_vnet_server_restore(self, database_engine, resource_group, server, restore_server):
-        time.sleep(40 * 60)
-        restore_time = (datetime.utcnow() - timedelta(minutes=20)).replace(tzinfo=tzutc()).isoformat()
+        time.sleep(60 * 60)
+        restore_time = (datetime.utcnow() - timedelta(minutes=30)).replace(tzinfo=tzutc()).isoformat()
 
         if database_engine == 'postgres':
             self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 1'
