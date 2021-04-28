@@ -446,6 +446,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                              JMESPathCheck('resourceGroup', resource_group)])
 
     def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server, restore_server):
+        
+        time.sleep(10 * 60)
 
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, server), checks=NoneCheck())
