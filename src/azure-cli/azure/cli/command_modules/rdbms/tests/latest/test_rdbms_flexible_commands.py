@@ -94,7 +94,7 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
         elif database_engine == 'mysql':
             tier = 'Burstable'
             sku_name = 'Standard_B1ms'
-            storage_size = 10
+            storage_size = 32
             version = '5.7'
         storage_size_mb = storage_size * 1024
         backup_retention = 7
@@ -610,7 +610,7 @@ class FlexibleServerValidatorScenarioTest(ScenarioTest):
                 sku_name = 'Standard_D2s_v3'
             else:
                 sku_name = 'Standard_D2ds_v4'
-            storage_size = 20
+            storage_size = 32
         storage_size_mb = storage_size * 1024
         backup_retention = 10
 
