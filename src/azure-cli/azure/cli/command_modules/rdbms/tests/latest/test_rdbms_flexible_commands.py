@@ -229,7 +229,7 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
     def _test_flexible_server_restore(self, database_engine, resource_group, server):
         time.sleep(20 * 60)
         restore_server = 'restore-' + server[:50]
-        restore_time = (datetime.utcnow() - timedelta(minutes=40)).replace(tzinfo=tzutc()).isoformat()
+        restore_time = (datetime.utcnow() - timedelta(minutes=20)).replace(tzinfo=tzutc()).isoformat()
 
         if database_engine == 'postgres':
             self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 2'
@@ -383,7 +383,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
     def _test_flexible_server_high_availability_restore(self, database_engine, resource_group, server):
         time.sleep(40 * 60)
         restore_server = 'restore-' + server[:55]
-        restore_time = (datetime.utcnow() - timedelta(minutes=40)).replace(tzinfo=tzutc()).isoformat()
+        restore_time = (datetime.utcnow() - timedelta(minutes=20)).replace(tzinfo=tzutc()).isoformat()
 
         self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 2'
                  .format(database_engine, resource_group, restore_server, server, restore_time),
@@ -437,8 +437,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                          JMESPathCheck('sku.tier', 'GeneralPurpose')])
 
     def _test_flexible_server_vnet_server_restore(self, database_engine, resource_group, server, restore_server):
-        time.sleep(40 * 60)
-        restore_time = (datetime.utcnow() - timedelta(minutes=40)).replace(tzinfo=tzutc()).isoformat()
+        time.sleep(60 * 60)
+        restore_time = (datetime.utcnow() - timedelta(minutes=30)).replace(tzinfo=tzutc()).isoformat()
 
         if database_engine == 'postgres':
             self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 1'
@@ -453,6 +453,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                              JMESPathCheck('resourceGroup', resource_group)])
 
     def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server, restore_server):
+        
+        time.sleep(10 * 60)
 
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, server), checks=NoneCheck())
