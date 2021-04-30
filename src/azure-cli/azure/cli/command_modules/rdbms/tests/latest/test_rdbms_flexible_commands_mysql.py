@@ -37,7 +37,7 @@ SERVER_NAME_MAX_LENGTH = 20
 RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
 EXISTING_RG = 'clitest-do-not-delete'
-EXISTING_SERVER = 'azuredbclitest-regularserver-mysql'
+EXISTING_SERVER = 'azuredbclitest-server-mysql'
 EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver-mysql'
 
 if mysql_location is None:
