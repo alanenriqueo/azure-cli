@@ -242,7 +242,7 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
                      checks=[JMESPathCheck('name', restore_server),
                              JMESPathCheck('resourceGroup', resource_group)])
 
-        self.cmd('{} flexible-server delete -g {} --name {}'.format(database_engine, resource_group, restore_server))
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
 
     def _test_flexible_server_restart(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server restart -g {} -n {}'
@@ -391,7 +391,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
                          JMESPathCheck('resourceGroup', resource_group),
                          JMESPathCheck('availabilityZone', 2)])
 
-        self.cmd('{} flexible-server delete -g {} --name {}'.format(database_engine, resource_group, restore_server))
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
 
     def _test_flexible_server_high_availability_delete(self, resource_group):
         self.cmd('az group delete --name {} --yes --no-wait'.format(resource_group), checks=NoneCheck())
