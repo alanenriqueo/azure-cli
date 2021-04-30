@@ -35,6 +35,11 @@ SERVER_NAME_PREFIX = 'azuredbclitest-'
 SERVER_NAME_MAX_LENGTH = 20
 RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
+EXISTING_RG = 'clitest-do-not-delete'
+EXISTING_SERVER = 'azuredbclitest-regularserver'
+EXISTING_HA_SERVER = 'azuredbclitest-haserver'
+EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver'
+EXISTING_VNET_HA_SERVER = 'azuredbclitest-vnethaserver'
 
 if postgres_location is None:
     postgres_location = 'eastus2euap'
@@ -142,7 +147,7 @@ class PostgresFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
     @AllowLargeResponse()
     @pytest.mark.order(18)
     def test_postgres_flexible_server_restore(self):
-        self._test_flexible_server_restore('postgres', self.resource_group, self.server)
+        self._test_flexible_server_restore('postgres', EXISTING_RG, EXISTING_SERVER)
 
     @AllowLargeResponse()
     @pytest.mark.order(19)
@@ -206,7 +211,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @AllowLargeResponse()
     @pytest.mark.order(10)
     def test_postgres_flexible_server_high_availability_restore(self):
-        self._test_flexible_server_high_availability_restore('postgres', self.resource_group, self.server)
+        self._test_flexible_server_high_availability_restore('postgres', EXISTING_RG, EXISTING_HA_SERVER)
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
@@ -242,7 +247,7 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
     @AllowLargeResponse()
     @pytest.mark.order(4)
     def test_postgres_flexible_server_vnet_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('postgres', self.resource_group, self.server, self.restore_server)
+        self._test_flexible_server_vnet_server_restore('postgres', EXISTING_RG, EXISTING_VNET_SERVER, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
@@ -262,7 +267,7 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
     @AllowLargeResponse()
     @pytest.mark.order(8)
     def test_postgres_flexible_server_vnet_ha_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('postgres', self.resource_group, self.server_2, self.restore_server_2)
+        self._test_flexible_server_vnet_server_restore('postgres', EXISTING_RG, EXISTING_VNET_HA_SERVER, self.restore_server_2)
 
     @AllowLargeResponse()
     @pytest.mark.order(9)

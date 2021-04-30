@@ -36,6 +36,9 @@ SERVER_NAME_PREFIX = 'azuredbclitest-'
 SERVER_NAME_MAX_LENGTH = 20
 RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
+EXISTING_RG = 'clitest-do-not-delete'
+EXISTING_SERVER = 'azuredbclitest-regularserver-mysql'
+EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver-mysql'
 
 if mysql_location is None:
     mysql_location = 'eastus2euap'
@@ -127,7 +130,7 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
     @AllowLargeResponse()
     @pytest.mark.order(15)
     def test_mysql_flexible_server_restore(self):
-        self._test_flexible_server_restore('mysql', self.resource_group, self.server)
+        self._test_flexible_server_restore('mysql', EXISTING_RG, EXISTING_SERVER)
 
     @AllowLargeResponse()
     @pytest.mark.order(16)
@@ -205,7 +208,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     @AllowLargeResponse()
     @pytest.mark.order(4)
     def test_mysql_flexible_server_vnet_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('mysql', self.resource_group, self.server, self.restore_server)
+        self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_SERVER, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
