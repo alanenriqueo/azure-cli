@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, tzinfo
 from time import sleep
 from dateutil.tz import tzutc
 import pytest
+import random
 from azure_devtools.scenario_tests import AllowLargeResponse
 from msrestazure.azure_exceptions import CloudError
 from azure.cli.core.local_context import AzCLILocalContext, ALL, LOCAL_CONTEXT_FILE
@@ -735,7 +736,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'testvnetserver10' + database_engine
+        server = 'testvnetserver10' + database_engine + str(random.randrange(10))
 
         # Scenario : Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
 
@@ -770,7 +771,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         vnet_name_2 = 'clitestvnet1'
         subnet_name_2 = 'clitestsubnet1'
-        server = 'testvnetserver2' + database_engine
+        server = 'testvnetserver2' + database_engine + str(random.randrange(10))
 
         # Scenario : Provision a server with supplied Subnet ID whose vnet exists, but subnet does not exist and the vnet does not contain any other subnet
         # The subnet name is the default created one, not the one in subnet ID
@@ -806,7 +807,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         vnet_name_2 = 'clitestvnet3'
 
         # flexible-servers
-        servers = ['testvnetserver3' + database_engine, 'testvnetserver4' + database_engine]
+        servers = ['testvnetserver3' + database_engine + str(random.randrange(10)), 'testvnetserver4' + database_engine + str(random.randrange(10))]
 
         # Case 1 : Provision a server with supplied Vname that exists.
 
@@ -859,7 +860,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
             location = self.mysql_location
 
         # flexible-servers
-        servers = ['testvnetserver5' + database_engine, 'testvnetserver6' + database_engine]
+        servers = ['testvnetserver5' + database_engine + str(random.randrange(10)), 'testvnetserver6' + database_engine + str(random.randrange(10))]
         # Case 1 : Provision a server with supplied Vname and subnet name that exists.
 
         # create vnet and subnet. When vnet name is supplied, the subnet created will be given the default name.
@@ -913,7 +914,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         subnet_name_2 = 'clitestsubnet8'
 
         # flexible-servers
-        servers = ['testvnetserver7' + database_engine, 'testvnetserver8' + database_engine]
+        servers = ['testvnetserver7' + database_engine + str(random.randrange(10)), 'testvnetserver8' + database_engine + str(random.randrange(10))]
 
         # Case 1 : Provision a server with supplied subnetid that exists in a different RG
 
