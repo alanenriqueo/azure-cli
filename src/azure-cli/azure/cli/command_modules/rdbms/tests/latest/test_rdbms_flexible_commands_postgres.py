@@ -39,7 +39,7 @@ EXISTING_RG = 'clitest-do-not-delete'
 EXISTING_SERVER = 'azuredbclitest-regularserver'
 EXISTING_HA_SERVER = 'azuredbclitest-haserver'
 EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver'
-EXISTING_VNET_HA_SERVER = 'azuredbclitest-vnethaserver'
+EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver'
 
 if postgres_location is None:
     postgres_location = 'eastus2euap'
