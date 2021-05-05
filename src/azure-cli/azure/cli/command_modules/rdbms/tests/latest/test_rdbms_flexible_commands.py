@@ -227,8 +227,7 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
                  .format(database_engine, resource_group, server),
                  checks=[JMESPathCheck('tags.key', '3')])
 
-    def _test_flexible_server_restore(self, database_engine, resource_group, server):
-        restore_server = 'restore-' + server[:50]
+    def _test_flexible_server_restore(self, database_engine, resource_group, server, restore_server):
         restore_time = (datetime.utcnow() - timedelta(minutes=60)).replace(tzinfo=tzutc()).isoformat()
 
         if database_engine == 'postgres':
@@ -382,8 +381,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, server), checks=NoneCheck())
 
-    def _test_flexible_server_high_availability_restore(self, database_engine, resource_group, server):
-        restore_server = 'restore-' + server[:55]
+    def _test_flexible_server_high_availability_restore(self, database_engine, resource_group, server, restore_server):
         restore_time = (datetime.utcnow() - timedelta(minutes=60)).replace(tzinfo=tzutc()).isoformat()
 
         self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {} --zone 2'

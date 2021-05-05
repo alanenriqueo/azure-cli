@@ -36,10 +36,10 @@ SERVER_NAME_MAX_LENGTH = 20
 RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
 EXISTING_RG = 'clitest-do-not-delete'
-EXISTING_SERVER = 'azuredbclitest-regularserver'
-EXISTING_HA_SERVER = 'azuredbclitest-haserver'
-EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver-pg'
-EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver-pg'
+EXISTING_SERVER = 'azuredbclitest-regularserver-pg-euap'
+EXISTING_HA_SERVER = 'azuredbclitest-haserver-pg-euap'
+EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver-pg-euap'
+EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver-pg-euap'
 
 if postgres_location is None:
     postgres_location = 'eastus2euap'
@@ -55,6 +55,7 @@ class PostgresFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
         self.random_name_2 = self.create_random_name(SERVER_NAME_PREFIX + '5', SERVER_NAME_MAX_LENGTH)
         self.random_name_3 = self.create_random_name(SERVER_NAME_PREFIX + '6', SERVER_NAME_MAX_LENGTH)
         self.random_name_4 = self.create_random_name(SERVER_NAME_PREFIX + '7', SERVER_NAME_MAX_LENGTH)
+        self.restore_server = 'restore-' + self.server[:55]
         self.current_time = datetime.utcnow()
         self.location = postgres_location
 
@@ -147,7 +148,7 @@ class PostgresFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
     @AllowLargeResponse()
     @pytest.mark.order(18)
     def test_postgres_flexible_server_restore(self):
-        self._test_flexible_server_restore('postgres', EXISTING_RG, EXISTING_SERVER)
+        self._test_flexible_server_restore('postgres', EXISTING_RG, EXISTING_SERVER, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(19)
@@ -163,6 +164,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
         self.location = postgres_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
         self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
+        self.restore_server = 'restore-' + self.server[:55]
 
     @pytest.mark.order(1)
     def test_postgres_flexible_server_high_availability_prepare(self):
@@ -211,7 +213,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @AllowLargeResponse()
     @pytest.mark.order(10)
     def test_postgres_flexible_server_high_availability_restore(self):
-        self._test_flexible_server_high_availability_restore('postgres', EXISTING_RG, EXISTING_HA_SERVER)
+        self._test_flexible_server_high_availability_restore('postgres', EXISTING_RG, EXISTING_HA_SERVER, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
