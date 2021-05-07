@@ -390,9 +390,12 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
                          JMESPathCheck('resourceGroup', resource_group),
                          JMESPathCheck('availabilityZone', 2)])
 
-        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
+    def _test_flexible_server_high_availability_delete(self, resource_group, server, restore_server=None):
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
 
-    def _test_flexible_server_high_availability_delete(self, resource_group):
+        if restore_server is not None:
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
+
         self.cmd('az group delete --name {} --yes --no-wait'.format(resource_group), checks=NoneCheck())
 
 
@@ -455,13 +458,19 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, restore_server))
 
-    def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server, restore_server):
+    def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server, restore_server=None):
 
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, server), checks=NoneCheck())
 
+        if restore_server is not None:
+            self.cmd('{} flexible-server delete -g {} -n {} --yes'
+                    .format(database_engine, resource_group, restore_server), checks=NoneCheck())
 
     def _test_flexible_server_vnet_server_mgmt_delete(self, resource_group):
+
+        time.sleep(20*60)
+
         self.cmd('az group delete --name {} --yes --no-wait'.format(resource_group), checks=NoneCheck())
 
 
