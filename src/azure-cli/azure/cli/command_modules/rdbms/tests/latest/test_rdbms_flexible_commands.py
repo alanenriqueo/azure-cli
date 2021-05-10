@@ -390,7 +390,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
                          JMESPathCheck('resourceGroup', resource_group),
                          JMESPathCheck('availabilityZone', 2)])
 
-    def _test_flexible_server_high_availability_delete(self, resource_group, server, restore_server=None):
+    def _test_flexible_server_high_availability_delete(self, database_engine, resource_group, server, restore_server=None):
         self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
 
         if restore_server is not None:
