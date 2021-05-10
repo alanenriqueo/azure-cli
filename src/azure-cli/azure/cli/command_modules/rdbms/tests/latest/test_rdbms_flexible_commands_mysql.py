@@ -187,6 +187,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
         self.location = mysql_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
         self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
+        self.server_2 = self.create_random_name(SERVER_NAME_PREFIX+'2', SERVER_NAME_MAX_LENGTH)
         self.vnet_name = self.create_random_name('VNET', SERVER_NAME_MAX_LENGTH)
         self.subnet_name = self.create_random_name('Subnet', SERVER_NAME_MAX_LENGTH)
         self.restore_server = 'restore-' + self.server[:55]
@@ -215,11 +216,6 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     @pytest.mark.order(5)
     def test_mysql_flexible_server_vnet_ha_server_create(self):
         self._test_flexible_server_vnet_ha_server_create('mysql', self.resource_group, self.server_2)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(6)
-    def test_mysql_flexible_server_vnet_ha_server_update_scale_up(self):
-        self._test_flexible_server_vnet_server_update_scale_up('mysql', self.resource_group, self.server_2)
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
