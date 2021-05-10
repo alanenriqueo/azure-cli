@@ -33,7 +33,7 @@ from .conftest import resource_random_name
 # Constants
 SERVER_NAME_PREFIX = 'azuredbclitest-'
 SERVER_NAME_MAX_LENGTH = 20
-
+EXISTING_RG = 'clitest-do-not-delete'
 
 class RdbmsScenarioTest(ScenarioTest):
 
@@ -59,7 +59,7 @@ class ServerPreparer(AbstractPreparer, SingleValueReplacer):
         from azure.cli.core.mock import DummyCli
         self.cli_ctx = DummyCli()
         self.engine_type = engine_type
-        self.engine_parameter_name = engine_parameter_name
+        self.engine_prameter_name = engine_parameter_name
         self.location = location
         self.parameter_name = parameter_name
         self.resource_group_parameter_name = resource_group_parameter_name
@@ -394,7 +394,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
         self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
 
         if restore_server is not None:
-            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, EXISTING_RG, restore_server))
 
         self.cmd('az group delete --name {} --yes --no-wait'.format(resource_group), checks=NoneCheck())
 
@@ -454,9 +454,6 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                      .format(database_engine, resource_group, restore_server, server, restore_time),
                      checks=[JMESPathCheck('name', restore_server),
                              JMESPathCheck('resourceGroup', resource_group)])
-        
-        self.cmd('{} flexible-server delete -g {} -n {} --yes'
-                 .format(database_engine, resource_group, restore_server))
 
     def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server, restore_server=None):
 
@@ -464,8 +461,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                  .format(database_engine, resource_group, server), checks=NoneCheck())
 
         if restore_server is not None:
-            self.cmd('{} flexible-server delete -g {} -n {} --yes'
-                    .format(database_engine, resource_group, restore_server), checks=NoneCheck())
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, EXISTING_RG, restore_server))
 
     def _test_flexible_server_vnet_server_mgmt_delete(self, resource_group):
 
