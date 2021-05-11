@@ -35,6 +35,14 @@ SERVER_NAME_PREFIX = 'azuredbclitest-'
 SERVER_NAME_MAX_LENGTH = 20
 
 
+def write_failed_result(filename):
+    with open(filename, "w") as f:
+        f.write("FAIL")
+
+def write_succeeded_result(filename):
+    with open(filename, "w") as f:
+        f.write("SUCCESS")
+
 class RdbmsScenarioTest(ScenarioTest):
 
     def create_random_name(self, prefix, length):
@@ -100,6 +108,9 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
         storage_size_mb = storage_size * 1024
         backup_retention = 7
 
+        self.cmd('{} flexible-server create -l {} -g {} -n {} --public-access none'
+                 .format(database_engine, self.location, resource_group, server), checks=None)
+        
         list_checks = [JMESPathCheck('name', server),
                        JMESPathCheck('resourceGroup', resource_group),
                        JMESPathCheck('sku.name', sku_name),
@@ -331,7 +342,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
 
     def _test_flexible_server_high_availability_create(self, database_engine, resource_group, server):
 
-        self.cmd('{} flexible-server create -g {} -l {} -n {} --high-availability Enabled --tier GeneralPurpose --sku-name Standard_D2s_v3 --public-access none'
+        self.cmd('{} flexible-server create -g {} -l {} -n {} --high-availability Enabled --tier GeneralPurpose --sku-name Standard_D4s_v3 --public-access none'
                  .format(database_engine, resource_group, self.location, server))
 
         self.cmd('{} flexible-server show -g {} -n {}'
@@ -354,9 +365,9 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
 
     def _test_flexible_server_high_availability_update_scale_up(self, database_engine, resource_group, server):
 
-        self.cmd('{} flexible-server update -g {} -n {} --tier GeneralPurpose --sku-name Standard_D4s_v3'
+        self.cmd('{} flexible-server update -g {} -n {} --tier GeneralPurpose --sku-name Standard_D8s_v3'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('sku.name', 'Standard_D4s_v3'),
+                 checks=[JMESPathCheck('sku.name', 'Standard_D8s_v3'),
                          JMESPathCheck('sku.tier', 'GeneralPurpose')])
 
     def _test_flexible_server_high_availability_update_parameter(self, database_engine, resource_group, server):
@@ -455,7 +466,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, restore_server))
 
-    def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server, restore_server):
+    def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server):
 
         self.cmd('{} flexible-server delete -g {} -n {} --yes'
                  .format(database_engine, resource_group, server), checks=NoneCheck())
