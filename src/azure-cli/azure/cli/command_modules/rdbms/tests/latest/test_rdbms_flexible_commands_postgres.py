@@ -254,7 +254,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @AllowLargeResponse()
     @pytest.mark.order(11)
     def test_postgres_flexible_server_high_availability_delete(self):
-        self._test_flexible_server_high_availability_delete(self.resource_group)
+        self._test_flexible_server_high_availability_delete('postgres', self.resource_group, self.server, self.restore_server)
 
 
 class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmtScenarioTest):

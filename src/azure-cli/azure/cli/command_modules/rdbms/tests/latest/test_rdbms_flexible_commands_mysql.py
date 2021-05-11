@@ -261,7 +261,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
             assert False
 
     @AllowLargeResponse()
-    @pytest.mark.order(4)
+    @pytest.mark.order(6)
     @pytest.mark.usefixtures("vnet_ha_server_provision_check")
     def test_mysql_flexible_server_vnet_ha_server_restore(self):
         self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_HA_SERVER, self.restore_server_2)
@@ -277,6 +277,10 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     @pytest.mark.usefixtures("vnet_server_provision_check")
     def test_mysql_flexible_server_vnet_server_delete(self):
         self._test_flexible_server_vnet_server_delete('mysql', self.resource_group, self.server)
+    
+    @pytest.mark.order(9)
+    def test_mysql_flexible_server_vnet_server_mgmt_delete(self):
+        self._test_flexible_server_vnet_server_mgmt_delete(self.resource_group)
 
 
 class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResourceMgmtScenarioTest):
@@ -348,39 +352,33 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
             assert False
 
     @AllowLargeResponse()
-    @pytest.mark.order(5)
-    @pytest.mark.usefixtures("ha_server_provision_check")
-    def test_mysql_flexible_server_high_availability_update_scale_up(self):
-        self._test_flexible_server_high_availability_update_scale_up('mysql', self.resource_group, self.server)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(6)
+    @pytest.mark.order(3)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_update_parameter(self):
         self._test_flexible_server_high_availability_update_parameter('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(7)
+    @pytest.mark.order(4)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_restart(self):
         self._test_flexible_server_high_availability_restart('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(8)
+    @pytest.mark.order(5)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_stop(self):
         self._test_flexible_server_high_availability_stop('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(9)
+    @pytest.mark.order(6)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_start(self):
         self._test_flexible_server_high_availability_start('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(10)
+    @pytest.mark.order(7)
     def test_mysql_flexible_server_high_availability_delete(self):
-        self._test_flexible_server_high_availability_delete(self.resource_group)
+        self._test_flexible_server_high_availability_delete(self.resource_group, self.server)
 
 
 class MySqlFlexibleServerValidatorScenarioTest(FlexibleServerValidatorScenarioTest):
