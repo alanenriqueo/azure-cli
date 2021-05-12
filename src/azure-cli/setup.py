@@ -113,8 +113,8 @@ DEPENDENCIES = [
     'azure-mgmt-redis~=7.0.0rc1',
     'azure-mgmt-relay~=0.1.0',
     'azure-mgmt-reservations==0.6.0',  # TODO: Use requirements.txt instead of '==' #9781
+    'azure-mgmt-resource==16.1.0',
     # 'azure-mgmt-reservations~=0.6.0',
-    'azure-mgmt-resource==12.1.0',
     'azure-mgmt-search~=8.0',
     'azure-mgmt-security~=0.6.0',
     'azure-mgmt-servicebus~=0.6.0',
@@ -137,6 +137,7 @@ DEPENDENCIES = [
     'jsmin~=2.2.2',
     'jsondiff==1.2.0',
     'packaging~=20.9',
+    'PyGithub==1.38',
     'pytz==2019.1',
     'scp~=0.13.2',
     'semver==2.13.0',
