@@ -788,8 +788,6 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server),
                  checks=NoneCheck())
 
-        # This is required because the delegations cannot be removed until the server is completely deleted. In the current implementation, there is a delay. Hence, the wait
-        time.sleep(10 * 60)
 
     def _test_flexible_server_vnet_mgmt_non_existing_supplied_subnetid(self, database_engine, resource_group):
 
@@ -820,8 +818,6 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         # Cleanup
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server), checks=NoneCheck())
-        # This is required because the delegations cannot be removed until the server is completely deleted. In the current implementation, there is a delay. Hence, the wait
-        time.sleep(10 * 60)
 
     def _test_flexible_server_vnet_mgmt_supplied_vnet(self, database_engine, resource_group):
 
@@ -878,8 +874,6 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, servers[1]),
                  checks=NoneCheck())
 
-        time.sleep(10 * 60)
-
     def _test_flexible_server_vnet_mgmt_supplied_vname_and_subnetname(self, database_engine, resource_group, virtual_network):
 
         # flexible-server create
@@ -927,7 +921,6 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, servers[1]),
                  checks=NoneCheck())
 
-        time.sleep(10 * 60)
 
     def _test_flexible_server_vnet_mgmt_supplied_subnet_id_in_different_rg(self, database_engine, resource_group_1, resource_group_2):
         # flexible-server create
@@ -988,7 +981,6 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group_2, servers[1]),
                  checks=NoneCheck())
 
-        time.sleep(10 * 60)
 
 
 class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
