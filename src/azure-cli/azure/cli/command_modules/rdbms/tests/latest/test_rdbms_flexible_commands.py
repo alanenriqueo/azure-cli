@@ -456,8 +456,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
     def _test_flexible_server_vnet_ha_server_create(self, database_engine, resource_group, server):
 
-        self.cmd('{} flexible-server create -g {} -n {} -l {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --high-availability Enabled'.
-                 format(database_engine, resource_group, server, self.location))
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --high-availability Enabled --private-dns-zone {}'.
+                 format(database_engine, resource_group, server, self.location, server + '.private.postgres.database.azure.com'))
 
         show_result = self.cmd('{} flexible-server show -g {} -n {}'
                                .format(database_engine, resource_group, server),
@@ -807,7 +807,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         # Scenario : Provision a server with supplied Subnet ID whose vnet exists, but subnet does not exist and the vnet does not contain any other subnet
         # The subnet name is the default created one, not the one in subnet ID
         self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {} --private-dns-zone {}'
-                 .format(database_engine, resource_group, server, location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(self.get_subscription_id(), resource_group, vnet_name_2, subnet_name_2, server + '.private.postgres.database.azure.com')))
+                 .format(database_engine, resource_group, server, location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(self.get_subscription_id(), resource_group, vnet_name_2, subnet_name_2), server + '.private.postgres.database.azure.com'))
 
         # flexible-server show to validate delegation is added to both the created server
         show_result = self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server)).get_output_in_json()
@@ -957,7 +957,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         # Case 2 : Provision a server with supplied subnetid that has a different RG in the ID but does not exist. The vnet and subnet is then created in the RG of the server
         self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {} --private-dns-zone {}'
                  .format(database_engine, resource_group_2, servers[1], location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                         self.get_subscription_id(), resource_group_1, vnet_name_2, subnet_name_2, servers[1] + '.private.postgres.database.azure.com')))
+                         self.get_subscription_id(), resource_group_1, vnet_name_2, subnet_name_2), servers[1] + '.private.postgres.database.azure.com'))
 
         # flexible-server show to validate delegation is added to both the created server
         show_result_1 = self.cmd('{} flexible-server show -g {} -n {}'
