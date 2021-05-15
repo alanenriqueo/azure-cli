@@ -261,11 +261,11 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
             write_failed_result(VNET_HA_SERVER_FILE)
             assert False
 
-    @AllowLargeResponse()
-    @pytest.mark.order(6)
-    @pytest.mark.usefixtures("vnet_ha_server_provision_check")
-    def test_mysql_flexible_server_vnet_ha_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_HA_SERVER + self.location, self.restore_server_2)
+    # @AllowLargeResponse()
+    # @pytest.mark.order(6)
+    # @pytest.mark.usefixtures("vnet_ha_server_provision_check")
+    # def test_mysql_flexible_server_vnet_ha_server_restore(self):
+    #     self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_HA_SERVER + self.location, self.restore_server_2)
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
