@@ -38,10 +38,10 @@ SERVER_NAME_MAX_LENGTH = 20
 RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
 EXISTING_RG = 'clitest-do-not-delete'
-EXISTING_SERVER = 'azuredbclitest-regularserver-pg-euap'
-EXISTING_HA_SERVER = 'azuredbclitest-haserver-pg-euap'
-EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver-pg-euap'
-EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver-pg-euap'
+EXISTING_SERVER = 'azuredbclitest-server-pg-'
+EXISTING_HA_SERVER = 'azuredbclitest-haserver-pg-'
+EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver-pg-'
+EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver-pg-'
 
 if postgres_location is None:
     postgres_location = 'eastus2euap'
@@ -170,7 +170,7 @@ class PostgresFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
     @pytest.mark.order(18)
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_restore(self):
-        self._test_flexible_server_restore('postgres', EXISTING_RG, EXISTING_SERVER, self.restore_server)
+        self._test_flexible_server_restore('postgres', EXISTING_RG, EXISTING_SERVER + self.location, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(19)
@@ -249,7 +249,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @pytest.mark.order(10)
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_high_availability_restore(self):
-        self._test_flexible_server_high_availability_restore('postgres', EXISTING_RG, EXISTING_HA_SERVER, self.restore_server)
+        self._test_flexible_server_high_availability_restore('postgres', EXISTING_RG, EXISTING_HA_SERVER + self.location, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
@@ -293,7 +293,7 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('postgres', EXISTING_RG, EXISTING_VNET_SERVER, self.restore_server)
+        self._test_flexible_server_vnet_server_restore('postgres', EXISTING_RG, EXISTING_VNET_SERVER + self.location, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
@@ -322,7 +322,7 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
     @pytest.mark.order(8)
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_ha_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('postgres', EXISTING_RG, EXISTING_VNET_HA_SERVER, self.restore_server_2)
+        self._test_flexible_server_vnet_server_restore('postgres', EXISTING_RG, EXISTING_VNET_HA_SERVER +  self.location, self.restore_server_2)
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
