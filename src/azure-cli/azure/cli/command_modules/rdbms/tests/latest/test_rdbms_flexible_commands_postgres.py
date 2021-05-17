@@ -150,7 +150,7 @@ class PostgresFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
 
     @AllowLargeResponse()
     @pytest.mark.order(15)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_create_non_default_tiers(self):
         self._test_flexible_server_create_non_default_tiers('postgres', self.resource_group)
 
@@ -254,7 +254,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @AllowLargeResponse()
     @pytest.mark.order(11)
     def test_postgres_flexible_server_high_availability_delete(self):
-        self._test_flexible_server_high_availability_delete('postgres', self.resource_group, self.server, self.restore_server)
+        self._test_flexible_server_high_availability_delete('postgres', self.resource_group, self.server)
 
 
 class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmtScenarioTest):
