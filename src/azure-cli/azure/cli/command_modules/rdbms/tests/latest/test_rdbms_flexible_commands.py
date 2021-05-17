@@ -865,7 +865,7 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         if database_engine == 'postgres':
             self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {} --private-dns-zone {}'
                     .format(database_engine, resource_group, servers[1], vnet_name_2, location, servers[1] + '.private.postgres.database.azure.com'))
-        elif database_egine == 'mysql':
+        elif database_engine == 'mysql':
             self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {}'
                     .format(database_engine, resource_group, servers[1], vnet_name_2, location))
 
