@@ -174,6 +174,13 @@ class PostgresFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
 
     @AllowLargeResponse()
     @pytest.mark.order(19)
+    @pytest.mark.execution_timeout(3600)
+    @live_only()
+    def test_postgres_flexible_server_create_without_parametera(self):
+        self._test_flexible_server_create_without_parametera('postgres')
+
+    @AllowLargeResponse()
+    @pytest.mark.order(20)
     def test_postgres_flexible_server_delete(self):
         self.cmd('az group delete --name {} --yes --no-wait'.format(self.resource_group))
 
