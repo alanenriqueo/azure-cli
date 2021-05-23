@@ -286,12 +286,12 @@ class FlexibleServerMgmtScenarioTest(RdbmsScenarioTest):
         self.cmd('{} flexible-server list-skus -l {}'.format(database_engine, location),
                  checks=[JMESPathCheck('type(@)', 'array')])
 
-    def _test_flexible_server_create_without_parametera(self, database_engine):
+    def _test_flexible_server_create_without_parameters(self, database_engine):
         result = self.cmd('{} flexible-server create -l {}'.format(database_engine, self.location)).get_output_in_json()
-        _, resource_group, server_name, _ = get_id_components(result['id'])
-        self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server_name))
+        _, rg, server_name, _ = get_id_components(result['id'])
+        self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, rg, server_name))
         time.sleep(60*10)
-        self.cmd('az group delete --name {} --yes --no-wait'.format(resource_group))
+        self.cmd('az group delete --name {} --yes --no-wait'.format(rg))
 
 class FlexibleServerIopsMgmtScenarioTest(RdbmsScenarioTest):
 

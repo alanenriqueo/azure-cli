@@ -151,16 +151,25 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
 
     @AllowLargeResponse()
     @pytest.mark.order(15)
+    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_restore(self):
         self._test_flexible_server_restore('mysql', EXISTING_RG, EXISTING_SERVER + self.location, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(16)
+    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_create_non_default_tiers(self):
         self._test_flexible_server_create_non_default_tiers('mysql', self.resource_group)
-
+    
     @AllowLargeResponse()
     @pytest.mark.order(17)
+    @pytest.mark.execution_timeout(3600)
+    @live_only()
+    def test_mysql_flexible_server_create_without_parameters(self):
+        self._test_flexible_server_create_without_parameters('mysql')
+
+    @AllowLargeResponse()
+    @pytest.mark.order(18)
     def test_mysql_flexible_server_delete(self):
         self.cmd('az group delete --name {} --yes --no-wait'.format(self.resource_group))
 
@@ -246,6 +255,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("vnet_server_provision_check")
     def test_mysql_flexible_server_vnet_server_restore(self):
         self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_SERVER + self.location, self.restore_server)
