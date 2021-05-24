@@ -151,7 +151,7 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
 
     @AllowLargeResponse()
     @pytest.mark.order(15)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_restore(self):
         self._test_flexible_server_restore('mysql', EXISTING_RG, EXISTING_SERVER + self.location, self.restore_server)
 
@@ -255,8 +255,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
-    @pytest.mark.usefixtures("vnet_server_provision_check")
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_vnet_server_restore(self):
         self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_SERVER + self.location, self.restore_server)
 
