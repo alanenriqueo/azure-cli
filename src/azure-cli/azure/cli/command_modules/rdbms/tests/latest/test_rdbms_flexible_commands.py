@@ -439,12 +439,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
     def _test_flexible_server_vnet_server_create(self, database_engine, resource_group, server):
 
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --private-dns-zone {}'.
-                     format(database_engine, resource_group, server, self.location, 'testdnsname.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} -l {}'.
-                     format(database_engine, resource_group, server, self.location))
+
+        self.cmd('{} flexible-server create -g {} -n {} -l {}'.format(database_engine, resource_group, server, self.location))
 
         show_result = self.cmd('{} flexible-server show -g {} -n {}'
                                .format(database_engine, resource_group, server)).get_output_in_json()
@@ -458,12 +454,8 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
     def _test_flexible_server_vnet_ha_server_create(self, database_engine, resource_group, server):
 
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --high-availability Enabled --private-dns-zone {}'.
-                    format(database_engine, resource_group, server, self.location, server + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --high-availability Enabled '.
-                    format(database_engine, resource_group, server, self.location))
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --high-availability Enabled '
+                 .format(database_engine, resource_group, server, self.location))
         
         show_result = self.cmd('{} flexible-server show -g {} -n {}'
                                .format(database_engine, resource_group, server),
@@ -784,12 +776,8 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         subnet_id = self.cmd('network vnet subnet show -g {rg} -n default --vnet-name {vnet}').get_output_in_json()['id']
 
         # create server - Delegation should be added.
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {} --private-dns-zone {}'
-                    .format(database_engine, resource_group, server, subnet_id, location, server + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
-                    .format(database_engine, resource_group, server, subnet_id, location))
+        self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
+                .format(database_engine, resource_group, server, subnet_id, location))
 
         # flexible-server show to validate delegation is added to both the created server
         show_result_1 = self.cmd('{} flexible-server show -g {} -n {}'
@@ -818,12 +806,9 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         # Scenario : Provision a server with supplied Subnet ID whose vnet exists, but subnet does not exist and the vnet does not contain any other subnet
         # The subnet name is the default created one, not the one in subnet ID
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {} --private-dns-zone {}'
-                    .format(database_engine, resource_group, server, location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(self.get_subscription_id(), resource_group, vnet_name_2, subnet_name_2), server + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {}'
-                    .format(database_engine, resource_group, server, location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(self.get_subscription_id(), resource_group, vnet_name_2, subnet_name_2)))
+
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {}'
+                .format(database_engine, resource_group, server, location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(self.get_subscription_id(), resource_group, vnet_name_2, subnet_name_2)))
 
         # flexible-server show to validate delegation is added to both the created server
         show_result = self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server)).get_output_in_json()
@@ -861,19 +846,12 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
                                .format(vnet_name, resource_group, location, address_prefix, 'Subnet' + servers[0][6:], subnet_prefix_1)).get_output_in_json()
 
         # create server - Delegation should be added.
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {} --private-dns-zone {}'
-                    .format(database_engine, resource_group, servers[0], vnet_result['newVNet']['name'], location, servers[0] + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {}'
-                    .format(database_engine, resource_group, servers[0], vnet_result['newVNet']['name'], location))
+
+        self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {}'
+                .format(database_engine, resource_group, servers[0], vnet_result['newVNet']['name'], location))
 
         # Case 2 : Provision a server with a supplied Vname that does not exist.
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {} --private-dns-zone {}'
-                    .format(database_engine, resource_group, servers[1], vnet_name_2, location, servers[1] + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {}'
+        self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {}'
                     .format(database_engine, resource_group, servers[1], vnet_name_2, location))
 
 
@@ -919,17 +897,10 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         subnet_id = self.cmd('network vnet subnet show -g {rg} -n default --vnet-name {vnet}').get_output_in_json()[
             'id']
         # create server - Delegation should be added.
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {} --subnet default --private-dns-zone {}'
-                    .format(database_engine, resource_group, servers[0], virtual_network, location, servers[0] + '.private.postgres.database.azure.com'))
+        self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {} --subnet default'
+                 .format(database_engine, resource_group, servers[0], virtual_network, location))
             # Case 2 : Provision a server with a supplied Vname and subnet name that does not exist.
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --vnet {} --private-dns-zone {}'
-                 .format(database_engine, resource_group, servers[1], location, vnet_name_2, servers[1] + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            self.cmd('{} flexible-server create -g {} -n {} --vnet {} -l {} --subnet default'
-                    .format(database_engine, resource_group, servers[0], virtual_network, location))
-            # Case 2 : Provision a server with a supplied Vname and subnet name that does not exist.
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --vnet {}'
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --vnet {}'
                  .format(database_engine, resource_group, servers[1], location, vnet_name_2))
         
 
@@ -982,24 +953,14 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
             .format(vnet_name, resource_group_1, location, address_prefix, subnet_name,
                     subnet_prefix_1)).get_output_in_json()
 
-        if database_engine == 'postgres':
-            # create server - Delegation should be added.
-            self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {} --private-dns-zone {}'
-                    .format(database_engine, resource_group_2, servers[0], vnet_result['newVNet']['subnets'][0]['id'], location, servers[0] + '.private.postgres.database.azure.com'))
+        # create server - Delegation should be added.
+        self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
+                .format(database_engine, resource_group_2, servers[0], vnet_result['newVNet']['subnets'][0]['id'], location))
 
-            # Case 2 : Provision a server with supplied subnetid that has a different RG in the ID but does not exist. The vnet and subnet is then created in the RG of the server
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {} --private-dns-zone {}'
-                    .format(database_engine, resource_group_2, servers[1], location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                            self.get_subscription_id(), resource_group_1, vnet_name_2, subnet_name_2), servers[1] + '.private.postgres.database.azure.com'))
-        elif database_engine == 'mysql':
-            # create server - Delegation should be added.
-            self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
-                    .format(database_engine, resource_group_2, servers[0], vnet_result['newVNet']['subnets'][0]['id'], location))
-
-            # Case 2 : Provision a server with supplied subnetid that has a different RG in the ID but does not exist. The vnet and subnet is then created in the RG of the server
-            self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {}'
-                    .format(database_engine, resource_group_2, servers[1], location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                            self.get_subscription_id(), resource_group_1, vnet_name_2, subnet_name_2)))
+        # Case 2 : Provision a server with supplied subnetid that has a different RG in the ID but does not exist. The vnet and subnet is then created in the RG of the server
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --subnet {}'
+                .format(database_engine, resource_group_2, servers[1], location, '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
+                        self.get_subscription_id(), resource_group_1, vnet_name_2, subnet_name_2)))
         
         # flexible-server show to validate delegation is added to both the created server
         show_result_1 = self.cmd('{} flexible-server show -g {} -n {}'
