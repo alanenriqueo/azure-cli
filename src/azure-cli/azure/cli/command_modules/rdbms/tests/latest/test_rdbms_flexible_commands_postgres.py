@@ -38,10 +38,10 @@ SERVER_NAME_MAX_LENGTH = 20
 RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
 EXISTING_RG = 'clitest-do-not-delete'
-EXISTING_SERVER = 'azuredbclitest-server2-pg-'
-EXISTING_HA_SERVER = 'azuredbclitest-haserver2-pg-'
-EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver2-pg-'
-EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver2-pg-'
+EXISTING_SERVER = 'azuredbclitest-server3-pg-'
+EXISTING_HA_SERVER = 'azuredbclitest-haserver3-pg-'
+EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver3-pg-'
+EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver3-pg-'
 
 if postgres_location is None:
     postgres_location = 'eastus2euap'
