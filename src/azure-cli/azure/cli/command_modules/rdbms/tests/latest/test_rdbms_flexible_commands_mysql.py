@@ -168,11 +168,6 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
     def test_mysql_flexible_server_create_without_parameters(self):
         self._test_flexible_server_create_without_parameters('mysql')
 
-    @AllowLargeResponse()
-    @pytest.mark.order(18)
-    def test_mysql_flexible_server_delete(self):
-        self.cmd('az group delete --name {} --yes --no-wait'.format(self.resource_group))
-
 
 class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest):
 
@@ -436,6 +431,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
+    @pytest.mark.execution_timeout(5000)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_create(self):
         self._test_flexible_server_replica_create('mysql', self.resource_group, self.master_server, self.replicas)
@@ -454,6 +450,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
+    @pytest.mark.execution_timeout(5000)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_delete_source(self):
         self._test_flexible_server_replica_delete_source('mysql', self.resource_group, self.master_server, self.replicas)

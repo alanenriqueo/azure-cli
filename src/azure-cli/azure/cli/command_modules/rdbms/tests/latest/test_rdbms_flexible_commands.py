@@ -449,9 +449,6 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
                              self.get_subscription_id(), resource_group, 'Vnet' + server[6:], 'Subnet' + server[6:]))
 
-        if database_engine == 'postgres':
-            self.assertIn('testdnsname.private.postgres.database.azure.com', show_result['privateDnsZoneArguments']['privateDnsZoneArmResourceId'])
-
     def _test_flexible_server_vnet_ha_server_create(self, database_engine, resource_group, server):
 
         self.cmd('{} flexible-server create -g {} -n {} -l {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --high-availability Enabled '
