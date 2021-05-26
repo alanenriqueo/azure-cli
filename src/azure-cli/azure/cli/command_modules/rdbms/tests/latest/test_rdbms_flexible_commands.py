@@ -492,7 +492,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
     def _test_flexible_server_vnet_server_mgmt_delete(self, resource_group):
 
-        time.sleep(10*60)
+        time.sleep(60 * 15)
 
         self.cmd('az group delete --name {} --yes --no-wait'.format(resource_group), checks=NoneCheck())
 
@@ -784,7 +784,8 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         # delete server
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server),
                  checks=NoneCheck())
-
+        
+        time.sleep(60*20)
 
     def _test_flexible_server_vnet_mgmt_non_existing_supplied_subnetid(self, database_engine, resource_group):
 
@@ -816,6 +817,9 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         # Cleanup
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server), checks=NoneCheck())
+
+
+        time.sleep(60*20)
 
     def _test_flexible_server_vnet_mgmt_supplied_vnet(self, database_engine, resource_group):
 
@@ -874,6 +878,8 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, servers[1]),
                  checks=NoneCheck())
 
+        time.sleep(60*20)
+
     def _test_flexible_server_vnet_mgmt_supplied_vname_and_subnetname(self, database_engine, resource_group, virtual_network):
 
         # flexible-server create
@@ -920,6 +926,9 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, servers[1]),
                  checks=NoneCheck())
+        
+        # Add sleeping time due to virtual network preparer
+        time.sleep(60*20)
 
 
     def _test_flexible_server_vnet_mgmt_supplied_subnet_id_in_different_rg(self, database_engine, resource_group_1, resource_group_2):
@@ -980,6 +989,8 @@ class FlexibleServerVnetMgmtScenarioTest(ScenarioTest):
 
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group_2, servers[1]),
                  checks=NoneCheck())
+
+        time.sleep(60*20)
 
 
 
