@@ -40,7 +40,7 @@ RG_NAME_PREFIX = 'clitest.rg'
 RG_NAME_MAX_LENGTH = 75
 EXISTING_RG = 'clitest-do-not-delete'
 EXISTING_SERVER = 'azuredbclitest-server-mysql-'
-EXISTING_HA_SERVER = 'azuredbclitest-haserver2-mysql-'
+EXISTING_HA_SERVER = 'azuredbclitest-haserver3-mysql-'
 EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver2-mysql-'
 EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver2-mysql-'
 
@@ -403,10 +403,10 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     def test_mysql_flexible_server_high_availability_start(self):
         self._test_flexible_server_high_availability_start('mysql', self.resource_group, self.server)
     
-    # @AllowLargeResponse()
-    # @pytest.mark.order(7)
-    # def test_mysql_flexible_server_high_availability_restore(self):
-    #     self._test_flexible_server_high_availability_restore('mysql', EXISTING_RG, EXISTING_HA_SERVER + self.location, self.restore_server)
+    @AllowLargeResponse()
+    @pytest.mark.order(7)
+    def test_mysql_flexible_server_high_availability_restore(self):
+        self._test_flexible_server_high_availability_restore('mysql', EXISTING_RG, EXISTING_HA_SERVER + self.location, self.restore_server)
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
