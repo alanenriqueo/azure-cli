@@ -405,6 +405,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     
     @AllowLargeResponse()
     @pytest.mark.order(7)
+    @pytest.mark.execution_timeout(6000)
     def test_mysql_flexible_server_high_availability_restore(self):
         self._test_flexible_server_high_availability_restore('mysql', EXISTING_RG, EXISTING_HA_SERVER + self.location, self.restore_server)
 
@@ -453,10 +454,15 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_create(self):
-        self._test_flexible_server_replica_create('mysql', self.resource_group, self.master_server, self.replicas)
+        try:
+            self._test_flexible_server_replica_create('mysql', self.resource_group, self.master_server, self.replicas)
+            write_succeeded_result(REPLICA_SERVER_FILE)
+        except:
+            write_failed_result(REPLICA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
@@ -470,14 +476,24 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_stop(self):
-        self._test_flexible_server_replica_stop('mysql', self.resource_group, self.master_server, self.replicas)
+        try:
+            self._test_flexible_server_replica_stop('mysql', self.resource_group, self.master_server, self.replicas)
+            write_succeeded_result(REPLICA_SERVER_FILE)
+        except:
+            write_failed_result(REPLICA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_delete_source(self):
-        self._test_flexible_server_replica_delete_source('mysql', self.resource_group, self.master_server, self.replicas)
+        try:
+            self._test_flexible_server_replica_delete_source('mysql', self.resource_group, self.master_server, self.replicas)
+            write_succeeded_result(REPLICA_SERVER_FILE)
+        except:
+            write_failed_result(REPLICA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
@@ -493,7 +509,7 @@ class MySqlFlexibleServerVnetMgmtScenarioTest(FlexibleServerVnetMgmtScenarioTest
     @AllowLargeResponse()
     @ResourceGroupPreparer(location=mysql_location)
     @VirtualNetworkPreparer(location=mysql_location)
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_vnet_mgmt_supplied_subnetid(self, resource_group):
         # Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
         self._test_flexible_server_vnet_mgmt_existing_supplied_subnetid('mysql', resource_group)
@@ -501,20 +517,20 @@ class MySqlFlexibleServerVnetMgmtScenarioTest(FlexibleServerVnetMgmtScenarioTest
         self._test_flexible_server_vnet_mgmt_non_existing_supplied_subnetid('mysql', resource_group)
 
     @AllowLargeResponse()
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(3600)
     @ResourceGroupPreparer(location=mysql_location)
     def test_mysql_flexible_server_vnet_mgmt_supplied_vnet(self, resource_group):
         self._test_flexible_server_vnet_mgmt_supplied_vnet('mysql', resource_group)
 
     @AllowLargeResponse()
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(3600)
     @ResourceGroupPreparer(location=mysql_location)
     @VirtualNetworkPreparer(parameter_name='virtual_network', location=mysql_location)
     def test_mysql_flexible_server_vnet_mgmt_supplied_vname_and_subnetname(self, resource_group, virtual_network):
         self._test_flexible_server_vnet_mgmt_supplied_vname_and_subnetname('mysql', resource_group, virtual_network)
 
     @AllowLargeResponse()
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(3600)
     @ResourceGroupPreparer(location=mysql_location, parameter_name='resource_group_1')
     @ResourceGroupPreparer(location=mysql_location, parameter_name='resource_group_2')
     def test_mysql_flexible_server_vnet_mgmt_supplied_subnet_id_in_different_rg(self, resource_group_1, resource_group_2):
