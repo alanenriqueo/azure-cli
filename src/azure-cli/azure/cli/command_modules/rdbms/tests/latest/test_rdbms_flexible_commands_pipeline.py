@@ -832,8 +832,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         resource_group = server + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
-        self.cmd('{} flexible-server create -g {} -n {} --private-dns-zone {}'
-                 .format(database_engine, resource_group, server, dns_zone))
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --private-dns-zone {}'
+                 .format(database_engine, resource_group, server, location, dns_zone))
         
         self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
                 checks=[JMESPathCheck('privateDnsZoneArguments.privateDnsZoneArmResourceId', dns_zone)])
