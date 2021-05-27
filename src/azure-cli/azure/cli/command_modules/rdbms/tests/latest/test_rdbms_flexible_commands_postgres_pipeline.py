@@ -271,7 +271,6 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
         self._test_flexible_server_high_availability_restore('postgres', SOURCE_RG, SOURCE_HA_SERVER_PREFIX + self.location, self.restore_server)
 
 
-
 class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmtScenarioTest):
 
     def __init__(self, method_name):
