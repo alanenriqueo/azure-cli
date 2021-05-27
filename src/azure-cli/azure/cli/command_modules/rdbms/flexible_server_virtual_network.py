@@ -190,7 +190,10 @@ def prepare_private_dns_zone(cmd, database_engine, resource_group, server_name, 
 
     dns_rg = None
     if private_dns_zone is None:
-        private_dns_zone = server_name + '.' + private_dns_zone_suffix
+        if 'private' in private_dns_zone_suffix:
+            private_dns_zone = server_name + '.' + private_dns_zone_suffix
+        else:
+            private_dns_zone = server_name + '.private.' + private_dns_zone_suffix
 
     #  resource ID input => check subscription and change client
     elif not _check_if_resource_name(private_dns_zone) and is_valid_resource_id(private_dns_zone):

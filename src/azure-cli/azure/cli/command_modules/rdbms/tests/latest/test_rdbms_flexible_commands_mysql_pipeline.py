@@ -17,48 +17,47 @@ from azure.cli.testsdk import (
     VirtualNetworkPreparer,
     LocalContextScenarioTest,
     live_only)
-from .test_rdbms_flexible_commands import (
+from .test_rdbms_flexible_commands_pipeline import (
     RdbmsScenarioTest,
     ServerPreparer,
-    FlexibleServerMgmtScenarioTest,
+    FlexibleServerRegularMgmtScenarioTest,
     FlexibleServerIopsMgmtScenarioTest,
     FlexibleServerHighAvailabilityMgmt,
     FlexibleServerVnetServerMgmtScenarioTest,
     FlexibleServerProxyResourceMgmtScenarioTest,
     FlexibleServerValidatorScenarioTest,
     FlexibleServerReplicationMgmtScenarioTest,
-    FlexibleServerVnetMgmtScenarioTest,
+    FlexibleServerVnetProvisionScenarioTest,
     FlexibleServerPublicAccessMgmtScenarioTest,
     write_failed_result,
     write_succeeded_result
 )
 from .conftest import mysql_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE, IOPS_SERVER_FILE, REPLICA_SERVER_FILE
 
-SERVER_NAME_PREFIX = 'azuredbclitest-'
-SERVER_NAME_MAX_LENGTH = 20
+SERVER_NAME_PREFIX = 'clitest-'
 RG_NAME_PREFIX = 'clitest.rg'
-RG_NAME_MAX_LENGTH = 75
-EXISTING_RG = 'clitest-do-not-delete'
-EXISTING_SERVER = 'azuredbclitest-server-mysql-'
-EXISTING_HA_SERVER = 'azuredbclitest-haserver3-mysql-'
-EXISTING_VNET_SERVER = 'azuredbclitest-vnetserver2-mysql-'
-EXISTING_VNET_HA_SERVER = 'azuredbclitest-havnetserver2-mysql-'
+SERVER_NAME_MAX_LENGTH = 50
+RG_NAME_PREFIX = 'rg'
+RG_NAME_MAX_LENGTH = 50
+SOURCE_RG = 'clitest-do-not-delete'
+SOURCE_SERVER_PREFIX = 'clitest-server-mysql-'
+SOURCE_HA_SERVER_PREFIX = 'clitest-server-ha-mysql-'
+SOURCE_VNET_SERVER_PREFIX = 'clitest-server-vnet-mysql-'
+SOURCE_VNET_HA_SERVER_PREFIX = 'clitest-server-vnet-ha-mysql-'
 
 if mysql_location is None:
     mysql_location = 'eastus2euap'
 
 
-class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
+class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenarioTest):
 
     def __init__(self, method_name):
-        super(MySqlFlexibleServerMgmtScenarioTest, self).__init__(method_name)
+        super(MySqlFlexibleServerRegularMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
-        self.random_name_1 = self.create_random_name(SERVER_NAME_PREFIX + '1', SERVER_NAME_MAX_LENGTH)
-        self.random_name_2 = self.create_random_name(SERVER_NAME_PREFIX + '2', SERVER_NAME_MAX_LENGTH)
-        self.random_name_3 = self.create_random_name(SERVER_NAME_PREFIX + '3', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'regular')
+        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier1')
+        self.server3 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier2')
         self.restore_server = 'restore-' + self.server[:55]
-        self.current_time = datetime.utcnow()
         self.location = mysql_location
 
     @pytest.mark.order(1)
@@ -163,22 +162,15 @@ class MySqlFlexibleServerMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
 
     @AllowLargeResponse()
     @pytest.mark.order(15)
-    @pytest.mark.execution_timeout(7200)
-    def test_mysql_flexible_server_restore(self):
-        self._test_flexible_server_restore('mysql', EXISTING_RG, EXISTING_SERVER + self.location, self.restore_server)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(16)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_create_non_default_tiers(self):
-        self._test_flexible_server_create_non_default_tiers('mysql', self.resource_group)
+        self._test_flexible_server_create_non_default_tiers('mysql', self.resource_group, self.server2, self.server3)
     
     @AllowLargeResponse()
     @pytest.mark.order(17)
     @pytest.mark.execution_timeout(3600)
-    @live_only()
-    def test_mysql_flexible_server_create_without_parameters(self):
-        self._test_flexible_server_create_without_parameters('mysql')
+    def test_mysql_flexible_server_restore(self):
+        self._test_flexible_server_restore('mysql', SOURCE_RG, SOURCE_SERVER_PREFIX + self.location, self.restore_server)
 
 
 class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest):
@@ -186,9 +178,7 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
     def __init__(self, method_name):
         super(MySqlFlexibleServerIopsMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server_1 = self.create_random_name(SERVER_NAME_PREFIX + '1', SERVER_NAME_MAX_LENGTH)
-        self.server_2 = self.create_random_name(SERVER_NAME_PREFIX + '2', SERVER_NAME_MAX_LENGTH)
-        self.server_3 = self.create_random_name(SERVER_NAME_PREFIX + '3', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'iops')
         self.location = mysql_location
 
     @AllowLargeResponse()
@@ -198,10 +188,10 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_iops_create(self):
         try:
-            self._test_flexible_server_iops_create('mysql', self.resource_group, self.server_1, self.server_2, self.server_3)
+            self._test_flexible_server_iops_create('mysql', self.resource_group, self.server)
             write_succeeded_result(IOPS_SERVER_FILE)
         except:
             write_failed_result(IOPS_SERVER_FILE)
@@ -209,17 +199,17 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_up(self):
-        self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server_1, self.server_2, self.server_3)
+        self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_down(self):
-        self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server_1, self.server_2, self.server_3)
+        self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
@@ -233,12 +223,10 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
         super(MySqlFlexibleServerVnetServerMgmtScenarioTest, self).__init__(method_name)
         self.location = mysql_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
-        self.server_2 = self.create_random_name(SERVER_NAME_PREFIX + '2', SERVER_NAME_MAX_LENGTH)
-        self.vnet_name = self.create_random_name('VNET', SERVER_NAME_MAX_LENGTH)
-        self.subnet_name = self.create_random_name('Subnet', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet')
+        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet-ha')
         self.restore_server = 'restore-' + self.server[:55]
-        self.restore_server_2 = 'restore-' + self.server_2[:55]
+        self.restore_server2 = 'restore-' + self.server2[:55]
         self.current_time = datetime.utcnow()
 
     @pytest.mark.order(1)
@@ -255,52 +243,48 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
         except:
             write_failed_result(VNET_SERVER_FILE)
             assert False
-
+    
     @AllowLargeResponse()
     @pytest.mark.order(3)
     @pytest.mark.execution_timeout(3600)
-    @pytest.mark.usefixtures("vnet_server_provision_check")
-    def test_mysql_flexible_server_vnet_server_update_scale_up(self):
-        self._test_flexible_server_vnet_server_update_scale_up('mysql', self.resource_group, self.server)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(7200)
-    def test_mysql_flexible_server_vnet_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_SERVER + self.location, self.restore_server)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_vnet_ha_server_create(self):
         try:
-            self._test_flexible_server_vnet_ha_server_create('mysql', self.resource_group, self.server_2)
+            self._test_flexible_server_vnet_ha_server_create('mysql', self.resource_group, self.server2)
             write_succeeded_result(VNET_HA_SERVER_FILE)
         except:
             write_failed_result(VNET_HA_SERVER_FILE)
             assert False
 
-    # @AllowLargeResponse()
-    # @pytest.mark.order(6)
-    # @pytest.mark.usefixtures("vnet_ha_server_provision_check")
-    # def test_mysql_flexible_server_vnet_ha_server_restore(self):
-    #     self._test_flexible_server_vnet_server_restore('mysql', EXISTING_RG, EXISTING_VNET_HA_SERVER + self.location, self.restore_server_2)
-
     @AllowLargeResponse()
-    @pytest.mark.order(7)
+    @pytest.mark.order(4)
+    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("vnet_server_provision_check")
+    def test_mysql_flexible_server_vnet_server_update_scale_up(self):
+        self._test_flexible_server_vnet_server_update_scale_up('mysql', self.resource_group, self.server)
+    
+    @AllowLargeResponse()
+    @pytest.mark.order(5)
     @pytest.mark.usefixtures("vnet_ha_server_provision_check")
     def test_mysql_flexible_server_vnet_ha_server_delete(self):
-        self._test_flexible_server_vnet_server_delete('mysql', self.resource_group, self.server_2)
+        self._test_flexible_server_vnet_server_delete('mysql', self.resource_group, self.server2)
 
     @AllowLargeResponse()
-    @pytest.mark.order(8)
+    @pytest.mark.order(6)
     @pytest.mark.usefixtures("vnet_server_provision_check")
     def test_mysql_flexible_server_vnet_server_delete(self):
         self._test_flexible_server_vnet_server_delete('mysql', self.resource_group, self.server)
-    
-    @pytest.mark.order(9)
-    def test_mysql_flexible_server_vnet_server_mgmt_delete(self):
-        self._test_flexible_server_vnet_server_mgmt_delete(self.resource_group)
+
+    @AllowLargeResponse()
+    @pytest.mark.order(7)
+    @pytest.mark.execution_timeout(5400)
+    def test_mysql_flexible_server_vnet_server_restore(self):
+        self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_SERVER_PREFIX + self.location, self.restore_server)
+
+    # @AllowLargeResponse()
+    # @pytest.mark.order(8)
+    # @pytest.mark.execution_timeout(5400)
+    # def test_mysql_flexible_server_vnet_ha_server_restore(self):
+    #     self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_HA_SERVER_PREFIX + self.location, self.restore_server2)
 
 
 class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResourceMgmtScenarioTest):
@@ -310,7 +294,7 @@ class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResour
     def __init__(self, method_name):
         super(MySqlFlexibleServerProxyResourceMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'proxy-resource')
 
     @AllowLargeResponse()
     @pytest.mark.order(1)
@@ -345,10 +329,6 @@ class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResour
     def test_mysql_flexible_server_database_mgmt(self):
         self._test_database_mgmt('mysql', self.resource_group, self.server)
 
-    @pytest.mark.order(5)
-    def test_mysql_flexible_server_proxy_resource_mgmt_delete(self):
-        self._test_flexible_server_proxy_resource_mgmt_delete(self.resource_group)
-
 
 class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt):
 
@@ -357,7 +337,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
         self.current_time = datetime.utcnow()
         self.location = mysql_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'ha')
         self.restore_server = 'restore-' + self.server[:55]
 
     @pytest.mark.order(1)
@@ -405,15 +385,15 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     
     @AllowLargeResponse()
     @pytest.mark.order(7)
-    @pytest.mark.execution_timeout(6000)
-    def test_mysql_flexible_server_high_availability_restore(self):
-        self._test_flexible_server_high_availability_restore('mysql', EXISTING_RG, EXISTING_HA_SERVER + self.location, self.restore_server)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(8)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_delete(self):
         self._test_flexible_server_high_availability_delete('mysql', self.resource_group, self.server)
+    
+    @AllowLargeResponse()
+    @pytest.mark.order(8)
+    @pytest.mark.execution_timeout(3600)
+    def test_mysql_flexible_server_high_availability_restore(self):
+        self._test_flexible_server_high_availability_restore('mysql', SOURCE_RG, SOURCE_HA_SERVER_PREFIX + self.location, self.restore_server)
 
 
 class MySqlFlexibleServerValidatorScenarioTest(FlexibleServerValidatorScenarioTest):
@@ -433,9 +413,9 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
     def __init__(self, method_name):
         super(MySqlFlexibleServerReplicationMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.master_server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
-        self.replicas = [self.create_random_name('azuredbclirep1', SERVER_NAME_MAX_LENGTH),
-                         self.create_random_name('azuredbclirep2', SERVER_NAME_MAX_LENGTH)]
+        self.master_server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'replica-source')
+        self.replicas = [self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'replica1'),
+                         self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'replica2')]
         self.location = mysql_location
         self.result = None
 
@@ -502,39 +482,25 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
         self._test_flexible_server_replica_delete('mysql', self.resource_group, self.replicas)
 
 
-class MySqlFlexibleServerVnetMgmtScenarioTest(FlexibleServerVnetMgmtScenarioTest):
+class MySqlFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisionScenarioTest):
 
     mysql_location = mysql_location
 
     @AllowLargeResponse()
-    @ResourceGroupPreparer(location=mysql_location)
-    @VirtualNetworkPreparer(location=mysql_location)
     @pytest.mark.execution_timeout(3600)
-    def test_mysql_flexible_server_vnet_mgmt_supplied_subnetid(self, resource_group):
+    def test_mysql_flexible_server_vnet_provision_supplied_subnetid(self):
         # Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
-        self._test_flexible_server_vnet_mgmt_existing_supplied_subnetid('mysql', resource_group)
-        # Provision a server with supplied Subnet ID whose vnet exists, but subnet does not exist and the vnet does not contain any other subnet
-        self._test_flexible_server_vnet_mgmt_non_existing_supplied_subnetid('mysql', resource_group)
+        self._test_flexible_server_vnet_provision_existing_supplied_subnetid('mysql')
 
     @AllowLargeResponse()
     @pytest.mark.execution_timeout(3600)
-    @ResourceGroupPreparer(location=mysql_location)
-    def test_mysql_flexible_server_vnet_mgmt_supplied_vnet(self, resource_group):
-        self._test_flexible_server_vnet_mgmt_supplied_vnet('mysql', resource_group)
-
+    def test_mysql_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
+        self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('mysql')
+    
     @AllowLargeResponse()
     @pytest.mark.execution_timeout(3600)
-    @ResourceGroupPreparer(location=mysql_location)
-    @VirtualNetworkPreparer(parameter_name='virtual_network', location=mysql_location)
-    def test_mysql_flexible_server_vnet_mgmt_supplied_vname_and_subnetname(self, resource_group, virtual_network):
-        self._test_flexible_server_vnet_mgmt_supplied_vname_and_subnetname('mysql', resource_group, virtual_network)
-
-    @AllowLargeResponse()
-    @pytest.mark.execution_timeout(3600)
-    @ResourceGroupPreparer(location=mysql_location, parameter_name='resource_group_1')
-    @ResourceGroupPreparer(location=mysql_location, parameter_name='resource_group_2')
-    def test_mysql_flexible_server_vnet_mgmt_supplied_subnet_id_in_different_rg(self, resource_group_1, resource_group_2):
-        self._test_flexible_server_vnet_mgmt_supplied_subnet_id_in_different_rg('mysql', resource_group_1, resource_group_2)
+    def test_mysql_flexible_server_vnet_provision_create_without_parameters(self):
+        self._test_flexible_server_vnet_provision_create_without_parameters('mysql')
 
 
 class MySqlFlexibleServerPublicAccessMgmtScenarioTest(FlexibleServerPublicAccessMgmtScenarioTest):
