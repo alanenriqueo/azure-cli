@@ -743,7 +743,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
             .format(vnet_name, resource_group, location, address_prefix, subnet_name,
                     subnet_prefix)).get_output_in_json()
 
-        subnet_id = self.cmd('network vnet subnet show -g {} -n {} --vnet-name {}'.format(resource_group, vnet_name, subnet_name)).get_output_in_json()['id']
+        subnet_id = self.cmd('network vnet subnet show -g {} -n {} --vnet-name {}'.format(resource_group, subnet_name, vnet_name)).get_output_in_json()['id']
 
         # create server - Delegation should be added.
         self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
@@ -827,7 +827,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'clitest-vnetprovision-dns-zone-no-private-' + resource_random_name
+        server = 'clitest-vnetprovision-dns-no-private-' + resource_random_name
         dns_zone = 'testdnsname.postgres.database.azure.com'
         resource_group = server + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
