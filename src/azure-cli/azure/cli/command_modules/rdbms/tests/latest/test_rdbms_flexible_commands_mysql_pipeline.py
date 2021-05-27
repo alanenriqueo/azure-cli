@@ -17,24 +17,24 @@ from azure.cli.testsdk import (
     VirtualNetworkPreparer,
     LocalContextScenarioTest,
     live_only)
-from .test_rdbms_flexible_commands import (
+from .test_rdbms_flexible_commands_pipeline import (
     RdbmsScenarioTest,
     ServerPreparer,
-    FlexibleServerMgmtScenarioTest,
+    FlexibleServerRegularMgmtScenarioTest,
     FlexibleServerIopsMgmtScenarioTest,
     FlexibleServerHighAvailabilityMgmt,
     FlexibleServerVnetServerMgmtScenarioTest,
     FlexibleServerProxyResourceMgmtScenarioTest,
     FlexibleServerValidatorScenarioTest,
     FlexibleServerReplicationMgmtScenarioTest,
-    FlexibleServerVnetMgmtScenarioTest,
+    FlexibleServerVnetProvisionScenarioTest,
     FlexibleServerPublicAccessMgmtScenarioTest,
     write_failed_result,
     write_succeeded_result
 )
 from .conftest import mysql_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE, IOPS_SERVER_FILE, REPLICA_SERVER_FILE
 
-SERVER_NAME_PREFIX = 'azuredbclitest-'
+SERVER_NAME_PREFIX = 'clitest-'
 SERVER_NAME_MAX_LENGTH = 50
 RG_NAME_PREFIX = 'rg'
 RG_NAME_MAX_LENGTH = 50
@@ -48,7 +48,7 @@ if mysql_location is None:
     mysql_location = 'eastus2euap'
 
 
-class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerMgmtScenarioTest):
+class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenarioTest):
 
     def __init__(self, method_name):
         super(MySqlFlexibleServerRegularMgmtScenarioTest, self).__init__(method_name)
@@ -483,7 +483,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
         self._test_flexible_server_replica_delete('mysql', self.resource_group, self.replicas)
 
 
-class MySqlFlexibleServerVnetMgmtScenarioTest(FlexibleServerVnetMgmtScenarioTest):
+class MySqlFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisionScenarioTest):
 
     mysql_location = mysql_location
 

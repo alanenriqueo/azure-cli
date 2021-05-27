@@ -28,11 +28,12 @@ from azure.cli.testsdk import (
 from azure.cli.testsdk.preparers import (
     AbstractPreparer,
     SingleValueReplacer)
-from .conftest import resource_random_name, REGULAR_SERVER_TIME, VNET_SERVER_TIME, VNET_HA_SERVER_TIME, HA_SERVER_TIME
+from .conftest import resource_random_name
 from azure.cli.command_modules.rdbms._flexible_server_util import get_id_components
 
 # Constants
 RDBMS_RESOURCE_PREFIX = 'clitest.'
+SERVER_NAME_PREFIX = 'clitest-'
 SERVER_NAME_MAX_LENGTH = 50
 EXISTING_RG = 'clitest-do-not-delete'
 RESTORE_BUFFER = 90
@@ -99,7 +100,7 @@ class ServerPreparer(AbstractPreparer, SingleValueReplacer):
         return kwargs.get(self.resource_group_parameter_name)
 
 
-class FlexibleServersularMgmtScenarioTest(RdbmsScenarioTest):
+class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
 
     def _test_flexible_server_create(self, database_engine, resource_group, server):
         if self.cli_ctx.local_context.is_on:
@@ -249,7 +250,12 @@ class FlexibleServersularMgmtScenarioTest(RdbmsScenarioTest):
                  checks=[JMESPathCheck('tags.key', '3')])
 
     def _test_flexible_server_restore(self, database_engine, resource_group, server, restore_server):
-        
+
+        try:
+            self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
+        except:
+            pytest.skip("source server not provisioned")
+
         self.cmd('{} flexible-server restore -g {} --name {} --source-server {}'
                 .format(database_engine, resource_group, restore_server, server),
                 checks=[JMESPathCheck('name', restore_server),

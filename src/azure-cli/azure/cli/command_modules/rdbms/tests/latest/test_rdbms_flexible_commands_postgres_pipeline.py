@@ -17,23 +17,21 @@ from azure.cli.testsdk import (
     VirtualNetworkPreparer,
     LocalContextScenarioTest,
     live_only)
-from .test_rdbms_flexible_commands import (
+from .test_rdbms_flexible_commands_pipeline import (
     ServerPreparer,
-    FlexibleServerMgmtScenarioTest,
+    FlexibleServerRegularMgmtScenarioTest,
     FlexibleServerIopsMgmtScenarioTest,
     FlexibleServerHighAvailabilityMgmt,
     FlexibleServerVnetServerMgmtScenarioTest,
     FlexibleServerProxyResourceMgmtScenarioTest,
     FlexibleServerValidatorScenarioTest,
     FlexibleServerReplicationMgmtScenarioTest,
-    FlexibleServerVnetMgmtScenarioTest,
+    FlexibleServerVnetProvisionScenarioTest,
     FlexibleServerPublicAccessMgmtScenarioTest,
     write_failed_result,
-    write_succeeded_result,
-    write_provision_time
+    write_succeeded_result
 )
-from .conftest import resource_random_name, postgres_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE,\
-    REGULAR_SERVER_TIME, VNET_SERVER_TIME, VNET_HA_SERVER_TIME, HA_SERVER_TIME
+from .conftest import resource_random_name, postgres_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE
 
 SERVER_NAME_PREFIX = 'clitest-'
 RG_NAME_PREFIX = 'rg'
@@ -49,10 +47,10 @@ if postgres_location is None:
     postgres_location = 'eastus2euap'
 
 
-class PostgresFlexibleServerRegularMgmtcenarioTest(FlexibleServerMgmtScenarioTest):
+class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenarioTest):
 
     def __init__(self, method_name):
-        super(PostgresFlexibleServerRegularMgmtcenarioTest, self).__init__(method_name)
+        super(PostgresFlexibleServerRegularMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
         self.server = self.create_random_name('regular', SERVER_NAME_MAX_LENGTH)
         self.server2 = self.create_random_name('diff-tier1', SERVER_NAME_MAX_LENGTH)
@@ -398,7 +396,7 @@ class PostgresFlexibleServerValidatorScenarioTest(FlexibleServerValidatorScenari
         self._test_mgmt_validator('postgres', resource_group)
 
 
-class PostgresFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetMgmtScenarioTest):
+class PostgresFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisionScenarioTest):
 
     postgres_location = postgres_location
 
