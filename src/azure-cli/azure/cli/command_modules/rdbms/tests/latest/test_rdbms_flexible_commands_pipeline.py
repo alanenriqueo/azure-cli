@@ -61,7 +61,7 @@ class RdbmsScenarioTest(ScenarioTest):
         class_name = class_name.replace('ScenarioTest', '')
 
         if self.in_recording:
-            name = prefix + '-' + class_name.lower()
+            name = prefix + class_name.lower()
             if description is not None:
                 name += '-' + description
             name += '-' + resource_random_name
