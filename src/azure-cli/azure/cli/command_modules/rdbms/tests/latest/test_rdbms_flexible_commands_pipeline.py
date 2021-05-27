@@ -452,6 +452,10 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
         
         self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
 
+    def _test_flexible_server_vnet_server_delete(self, database_engine, resource_group, server):
+
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
+
 
 class FlexibleServerProxyResourceMgmtScenarioTest(RdbmsScenarioTest):
 
@@ -724,7 +728,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
 
         server = 'clitest-VnetProvision-supplied-subnetid-' + resource_random_name
         resource_group = server + '-rg'
-        self.cmd('group create -n {} -l {}'.format(location, resource_group))
+        self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
         # Scenario : Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
         vnet_name = 'clitestvnet'
@@ -772,8 +776,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         server = 'clitest-VnetProvision-diff-rg-subnetid-' + resource_random_name
         resource_group_1 = server + '-rg1'
         resource_group_2 = server + '-rg2'
-        self.cmd('group create -n {} -l {}'.format(location, resource_group_1))
-        self.cmd('group create -n {} -l {}'.format(location, resource_group_2))
+        self.cmd('group create -n {} -l {}'.format(resource_group_1, location))
+        self.cmd('group create -n {} -l {}'.format(resource_group_2, location))
 
         # Case 1 : Provision a server with supplied subnetid that exists in a different RG
 
@@ -824,7 +828,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         server = 'clitest-VnetProvision-dns-zone-no-private-' + resource_random_name
         dns_zone = 'testdnsname.postgres.database.azure.com'
         resource_group = server + '-rg'
-        self.cmd('group create -n {} -l {}'.format(location, resource_group))
+        self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
         self.cmd('{} flexible-server create -g {} -n {} --private-dns-zone {}'
                  .format(database_engine, resource_group, server, dns_zone))
@@ -857,15 +861,13 @@ class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server create -g {} -n {} --public-access {} -l {}'
                  .format(database_engine, resource_group, servers[0], 'all', location),
                  checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('skuname', sku_name),
-                         StringContainCheck('AllowAll_'),
-                         StringContainCheck(servers[0])])
+                         StringContainCheck('AllowAll_')])
 
         # Case 2 : Provision a server with public access allowing all azure services
         self.cmd('{} flexible-server create -g {} -n {} --public-access {} -l {}'
                  .format(database_engine, resource_group, servers[1], '0.0.0.0', location),
                  checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('skuname', sku_name),
-                         StringContainCheck('AllowAllAzureServicesAndResourcesWithinAzureIps_'),
-                         StringContainCheck(servers[1])])
+                         StringContainCheck('AllowAllAzureServicesAndResourcesWithinAzureIps_')])
 
         # delete all servers
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, servers[0]),
