@@ -32,8 +32,8 @@ from .conftest import resource_random_name
 from azure.cli.command_modules.rdbms._flexible_server_util import get_id_components
 
 # Constants
-RDBMS_RESOURCE_PREFIX = 'clitest.'
 SERVER_NAME_PREFIX = 'clitest-'
+RG_NAME_PREFIX = 'clitest.rg'
 SERVER_NAME_MAX_LENGTH = 50
 EXISTING_RG = 'clitest-do-not-delete'
 RESTORE_BUFFER = 90
@@ -49,7 +49,7 @@ def write_succeeded_result(filename):
 
 class RdbmsScenarioTest(ScenarioTest):
 
-    def create_random_name(self, prefix, length):
+    def create_random_name(self, prefix, length, description=None):
         self.test_resources_count += 1
         moniker = '{}{:06}'.format(prefix, self.test_resources_count)
 
@@ -61,7 +61,10 @@ class RdbmsScenarioTest(ScenarioTest):
         class_name = class_name.replace('ScenarioTest', '')
 
         if self.in_recording:
-            name = RDBMS_RESOURCE_PREFIX + class_name + '-' + prefix + '-' + resource_random_name
+            name = prefix + '-' + class_name
+            if description is not None:
+                name += '-' + description
+            name += '-' + resource_random_name
             name = name[:50].lower()
             self.name_replacer.register_name_pair(name, moniker)
             return name
@@ -294,32 +297,31 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
                  checks=[JMESPathCheck('type(@)', 'array')])
 
 
-
 class FlexibleServerIopsMgmtScenarioTest(RdbmsScenarioTest):
 
-    def _test_flexible_server_iops_create(self, database_engine, resource_group, server_1):
+    def _test_flexible_server_iops_create(self, database_engine, resource_group, server):
         if self.cli_ctx.local_context.is_on:
             self.cmd('local-context off')
 
         # IOPS passed is beyond limit of max allowed by SKU and free storage
         self.cmd('{} flexible-server create --public-access none -g {} -n {} -l {} --iops 350 --storage-size 200 --tier Burstable --sku-name Standard_B1ms'
-                 .format(database_engine, resource_group, server_1, self.location))
+                 .format(database_engine, resource_group, server, self.location))
 
-        self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server_1),
+        self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
                  checks=[JMESPathCheck('storageProfile.storageIops', 640)])
 
-    def _test_flexible_server_iops_scale_up(self, database_engine, resource_group, server_1):
+    def _test_flexible_server_iops_scale_up(self, database_engine, resource_group, server):
 
         # SKU upgraded and IOPS value set smaller than free iops, max iops for the sku
         self.cmd('{} flexible-server update -g {} -n {} --tier GeneralPurpose --sku-name Standard_D8s_v3 --iops 400'
-                 .format(database_engine, resource_group, server_1),
+                 .format(database_engine, resource_group, server),
                  checks=[JMESPathCheck('storageProfile.storageIops', 900)])
 
-    def _test_flexible_server_iops_scale_down(self, database_engine, resource_group, server_1):
+    def _test_flexible_server_iops_scale_down(self, database_engine, resource_group, server):
 
         # SKU downgraded and free iops is bigger than free iops
         self.cmd('{} flexible-server update -g {} -n {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --storage-size 300'
-                 .format(database_engine, resource_group, server_1),
+                 .format(database_engine, resource_group, server),
                  checks=[JMESPathCheck('storageProfile.storageIops', 1200)])
 
 
@@ -720,7 +722,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'clitest.VnetProvision-supplied-subnetid' + resource_random_name
+        server = 'clitest-VnetProvision-supplied-subnetid-' + resource_random_name
         resource_group = server + '-rg'
         self.cmd('group create -n {} -l {}'.format(location, resource_group))
 
@@ -767,7 +769,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         subnet_prefix_1 = '172.0.0.0/24'
 
         # flexible-servers
-        server = 'clitest.VnetProvision-diff-rg-subnetid' + resource_random_name
+        server = 'clitest-VnetProvision-diff-rg-subnetid-' + resource_random_name
         resource_group_1 = server + '-rg1'
         resource_group_2 = server + '-rg2'
         self.cmd('group create -n {} -l {}'.format(location, resource_group_1))
@@ -819,7 +821,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'clitest.VnetProvision-dns-zone-no-private' + resource_random_name
+        server = 'clitest-VnetProvision-dns-zone-no-private-' + resource_random_name
         dns_zone = 'testdnsname.postgres.database.azure.com'
         resource_group = server + '-rg'
         self.cmd('group create -n {} -l {}'.format(location, resource_group))
@@ -847,8 +849,8 @@ class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
             location = self.mysql_location
 
         # flexible-servers
-        servers = ['clitest.PublicAccess-server1' + resource_random_name,
-                   'clitest.PublicAccess-server2' + resource_random_name]
+        servers = ['clitest-PublicAccess-server1' + resource_random_name,
+                   'clitest-PublicAccess-server2' + resource_random_name]
 
         # Case 1 : Provision a server with public access all
         # create server

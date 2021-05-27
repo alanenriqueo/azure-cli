@@ -35,6 +35,7 @@ from .test_rdbms_flexible_commands_pipeline import (
 from .conftest import mysql_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE, IOPS_SERVER_FILE, REPLICA_SERVER_FILE
 
 SERVER_NAME_PREFIX = 'clitest-'
+RG_NAME_PREFIX = 'clitest.rg'
 SERVER_NAME_MAX_LENGTH = 50
 RG_NAME_PREFIX = 'rg'
 RG_NAME_MAX_LENGTH = 50
@@ -53,9 +54,9 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
     def __init__(self, method_name):
         super(MySqlFlexibleServerRegularMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('regular', SERVER_NAME_MAX_LENGTH)
-        self.server2 = self.create_random_name('diff-tier1', SERVER_NAME_MAX_LENGTH)
-        self.server3 = self.create_random_name('diff-tier2', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'regular')
+        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier1')
+        self.server3 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier2')
         self.restore_server = 'restore-' + self.server[:55]
         self.location = mysql_location
 
@@ -177,9 +178,7 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
     def __init__(self, method_name):
         super(MySqlFlexibleServerIopsMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server_1 = self.create_random_name(SERVER_NAME_PREFIX + '1', SERVER_NAME_MAX_LENGTH)
-        self.server_2 = self.create_random_name(SERVER_NAME_PREFIX + '2', SERVER_NAME_MAX_LENGTH)
-        self.server_3 = self.create_random_name(SERVER_NAME_PREFIX + '3', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'iops')
         self.location = mysql_location
 
     @AllowLargeResponse()
@@ -189,10 +188,10 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_iops_create(self):
         try:
-            self._test_flexible_server_iops_create('mysql', self.resource_group, self.server_1, self.server_2, self.server_3)
+            self._test_flexible_server_iops_create('mysql', self.resource_group, self.server)
             write_succeeded_result(IOPS_SERVER_FILE)
         except:
             write_failed_result(IOPS_SERVER_FILE)
@@ -200,17 +199,17 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_up(self):
-        self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server_1, self.server_2, self.server_3)
+        self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(7200)
+    @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_down(self):
-        self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server_1, self.server_2, self.server_3)
+        self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
@@ -224,8 +223,8 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
         super(MySqlFlexibleServerVnetServerMgmtScenarioTest, self).__init__(method_name)
         self.location = mysql_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH)
-        self.server2 = self.create_random_name(SERVER_NAME_PREFIX + '2', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet')
+        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet-ha')
         self.restore_server = 'restore-' + self.server[:55]
         self.restore_server2 = 'restore-' + self.server2[:55]
         self.current_time = datetime.utcnow()
@@ -295,7 +294,7 @@ class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResour
     def __init__(self, method_name):
         super(MySqlFlexibleServerProxyResourceMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('proxy-resource', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'proxy-resource')
 
     @AllowLargeResponse()
     @pytest.mark.order(1)
@@ -338,7 +337,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
         self.current_time = datetime.utcnow()
         self.location = mysql_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('ha', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'ha')
         self.restore_server = 'restore-' + self.server[:55]
 
     @pytest.mark.order(1)
@@ -414,9 +413,9 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
     def __init__(self, method_name):
         super(MySqlFlexibleServerReplicationMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.master_server = self.create_random_name('replica-source', SERVER_NAME_MAX_LENGTH)
-        self.replicas = [self.create_random_name('replica1', SERVER_NAME_MAX_LENGTH),
-                         self.create_random_name('replica2', SERVER_NAME_MAX_LENGTH)]
+        self.master_server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'replica-source')
+        self.replicas = [self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'replica1'),
+                         self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'replica2')]
         self.location = mysql_location
         self.result = None
 

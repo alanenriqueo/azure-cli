@@ -34,7 +34,7 @@ from .test_rdbms_flexible_commands_pipeline import (
 from .conftest import resource_random_name, postgres_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE
 
 SERVER_NAME_PREFIX = 'clitest-'
-RG_NAME_PREFIX = 'rg'
+RG_NAME_PREFIX = 'clitest.rg'
 SERVER_NAME_MAX_LENGTH = 50
 RG_NAME_MAX_LENGTH = 50
 SOURCE_RG = 'clitest-do-not-delete'
@@ -52,11 +52,11 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
     def __init__(self, method_name):
         super(PostgresFlexibleServerRegularMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('regular', SERVER_NAME_MAX_LENGTH)
-        self.server2 = self.create_random_name('diff-tier1', SERVER_NAME_MAX_LENGTH)
-        self.server3 = self.create_random_name('diff-tier2', SERVER_NAME_MAX_LENGTH)
-        self.server4 = self.create_random_name( 'diff-version', SERVER_NAME_MAX_LENGTH)
-        self.server5 = self.create_random_name( 'zone-select', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'regular')
+        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier1')
+        self.server3 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier2')
+        self.server4 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-version')
+        self.server5 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'zone-select')
         self.restore_server = 'restore-' + self.server[:55]
         self.location = postgres_location
 
@@ -192,7 +192,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
         self.current_time = datetime.utcnow()
         self.location = postgres_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('ha', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'ha')
         self.restore_server = 'restore-' + self.server[:55]
 
     @pytest.mark.order(1)
@@ -277,8 +277,8 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
         super(PostgresFlexibleServerVnetServerMgmtScenarioTest, self).__init__(method_name)
         self.location = postgres_location
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('vnet', SERVER_NAME_MAX_LENGTH)
-        self.server2 = self.create_random_name('vnet-ha', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet')
+        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet-ha')
         self.restore_server = 'restore-' + self.server[:55]
         self.restore_server2 = 'restore-' + self.server2[:55]
 
@@ -352,7 +352,7 @@ class PostgresFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyRes
     def __init__(self, method_name):
         super(PostgresFlexibleServerProxyResourceMgmtScenarioTest, self).__init__(method_name)
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name('proxy-resource', SERVER_NAME_MAX_LENGTH)
+        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'proxy-resource')
 
     @AllowLargeResponse()
     @pytest.mark.order(1)
