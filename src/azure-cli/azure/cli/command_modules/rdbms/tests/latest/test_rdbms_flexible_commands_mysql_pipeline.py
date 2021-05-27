@@ -280,11 +280,11 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     def test_mysql_flexible_server_vnet_server_restore(self):
         self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_SERVER_PREFIX + self.location, self.restore_server)
 
-    @AllowLargeResponse()
-    @pytest.mark.order(8)
-    @pytest.mark.execution_timeout(5400)
-    def test_mysql_flexible_server_vnet_ha_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_HA_SERVER_PREFIX + self.location, self.restore_server2)
+    # @AllowLargeResponse()
+    # @pytest.mark.order(8)
+    # @pytest.mark.execution_timeout(5400)
+    # def test_mysql_flexible_server_vnet_ha_server_restore(self):
+    #     self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_HA_SERVER_PREFIX + self.location, self.restore_server2)
 
 
 class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResourceMgmtScenarioTest):
