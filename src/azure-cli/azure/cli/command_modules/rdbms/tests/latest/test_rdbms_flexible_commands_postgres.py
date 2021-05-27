@@ -17,7 +17,7 @@ from azure.cli.testsdk import (
     VirtualNetworkPreparer,
     LocalContextScenarioTest,
     live_only)
-from .test_rdbms_flexible_commands_pipeline import (
+from .test_rdbms_flexible_commands import (
     ServerPreparer,
     FlexibleServerRegularMgmtScenarioTest,
     FlexibleServerIopsMgmtScenarioTest,
