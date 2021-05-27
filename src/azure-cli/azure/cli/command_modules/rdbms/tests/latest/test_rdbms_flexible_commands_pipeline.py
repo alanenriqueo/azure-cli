@@ -836,7 +836,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
                  .format(database_engine, resource_group, server, location, dns_zone))
         
         self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
-                checks=[JMESPathCheck('privateDnsZoneArguments.privateDnsZoneArmResourceId', dns_zone)])
+                checks=[JMESPathCheck('privateDnsZoneArguments.privateDnsZoneArmResourceId', '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/privateDnsZones/{}'.format(
+                             self.get_subscription_id(), resource_group, dns_zone))])
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server))
 
 
