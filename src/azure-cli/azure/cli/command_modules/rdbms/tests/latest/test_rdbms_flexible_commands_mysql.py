@@ -391,7 +391,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     
     @AllowLargeResponse()
     @pytest.mark.order(8)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(5400)
     def test_mysql_flexible_server_high_availability_restore(self):
         self._test_flexible_server_high_availability_restore('mysql', SOURCE_RG, SOURCE_HA_SERVER_PREFIX + self.location, self.restore_server)
 
