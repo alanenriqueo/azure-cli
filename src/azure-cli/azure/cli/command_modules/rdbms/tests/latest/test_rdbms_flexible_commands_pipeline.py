@@ -381,6 +381,12 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
                  .format(database_engine, resource_group, server), checks=NoneCheck())
 
     def _test_flexible_server_high_availability_restore(self, database_engine, resource_group, server, restore_server):
+
+        try:
+            self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
+        except:
+            pytest.skip("source server not provisioned")
+
         if database_engine == 'postgres':
             self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --zone 2'
                      .format(database_engine, resource_group, restore_server, server),
@@ -431,6 +437,11 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                  .format(database_engine, resource_group, server))
 
     def _test_flexible_server_vnet_server_restore(self, database_engine, resource_group, server, restore_server):
+
+        try:
+            self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
+        except:
+            pytest.skip("source server not provisioned")
 
         self.cmd('{} flexible-server restore -g {} --name {} --source-server {}'
                     .format(database_engine, resource_group, restore_server, server),
