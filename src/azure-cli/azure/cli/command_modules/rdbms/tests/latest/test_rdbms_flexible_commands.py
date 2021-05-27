@@ -61,7 +61,7 @@ class RdbmsScenarioTest(ScenarioTest):
         class_name = class_name.replace('ScenarioTest', '')
 
         if self.in_recording:
-            name = prefix + '-' + class_name
+            name = prefix + '-' + class_name.lower()
             if description is not None:
                 name += '-' + description
             name += '-' + resource_random_name
@@ -259,8 +259,9 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
         except:
             pytest.skip("source server not provisioned")
 
-        self.cmd('{} flexible-server restore -g {} --name {} --source-server {}'
-                .format(database_engine, resource_group, restore_server, server),
+        restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
+        self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
+                .format(database_engine, resource_group, restore_server, server, restore_time),
                 checks=[JMESPathCheck('name', restore_server),
                         JMESPathCheck('resourceGroup', resource_group)])
 
@@ -388,16 +389,16 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
             self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
         except:
             pytest.skip("source server not provisioned")
-
+        restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
         if database_engine == 'postgres':
-            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --zone 2'
-                     .format(database_engine, resource_group, restore_server, server),
+            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --zone 2 --restore-time {}'
+                     .format(database_engine, resource_group, restore_server, server, restore_time),
                      checks=[JMESPathCheck('name', restore_server),
                              JMESPathCheck('resourceGroup', resource_group),
                              JMESPathCheck('availabilityZone', 2)])
         else:
-            self.cmd('{} flexible-server restore -g {} --name {} --source-server {}'
-                     .format(database_engine, resource_group, restore_server, server),
+            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
+                     .format(database_engine, resource_group, restore_server, server, restore_time),
                      checks=[JMESPathCheck('name', restore_server),
                              JMESPathCheck('resourceGroup', resource_group)])
         
@@ -444,9 +445,10 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
             self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
         except:
             pytest.skip("source server not provisioned")
+        restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
 
-        self.cmd('{} flexible-server restore -g {} --name {} --source-server {}'
-                    .format(database_engine, resource_group, restore_server, server),
+        self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
+                    .format(database_engine, resource_group, restore_server, server, restore_time),
                     checks=[JMESPathCheck('name', restore_server),
                             JMESPathCheck('resourceGroup', resource_group)])
         
@@ -726,7 +728,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'clitest-VnetProvision-supplied-subnetid-' + resource_random_name
+        server = 'clitest-vnetprovision-supplied-subnetid-' + resource_random_name
         resource_group = server + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
@@ -773,7 +775,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         subnet_prefix_1 = '172.0.0.0/24'
 
         # flexible-servers
-        server = 'clitest-VnetProvision-diff-rg-subnetid-' + resource_random_name
+        server = 'clitest-vnetprovision-diff-rg-subnetid-' + resource_random_name
         resource_group_1 = server + '-rg1'
         resource_group_2 = server + '-rg2'
         self.cmd('group create -n {} -l {}'.format(resource_group_1, location))
@@ -825,7 +827,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'clitest-VnetProvision-dns-zone-no-private-' + resource_random_name
+        server = 'clitest-vnetprovision-dns-zone-no-private-' + resource_random_name
         dns_zone = 'testdnsname.postgres.database.azure.com'
         resource_group = server + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
@@ -853,8 +855,8 @@ class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
             location = self.mysql_location
 
         # flexible-servers
-        servers = ['clitest-PublicAccess-server1' + resource_random_name,
-                   'clitest-PublicAccess-server2' + resource_random_name]
+        servers = ['clitest-publicaccess-server1' + resource_random_name,
+                   'clitest-publicaccess-server2' + resource_random_name]
 
         # Case 1 : Provision a server with public access all
         # create server
