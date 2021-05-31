@@ -53,7 +53,7 @@ class RdbmsScenarioTest(ScenarioTest):
         self.test_resources_count += 1
         moniker = '{}{:06}'.format(prefix, self.test_resources_count)
 
-        class_name = type(self).__name__[22:]
+        class_name = type(self).__name__
         if 'MySql' in class_name:
             class_name = class_name.replace('MySqlFlexibleServer', '')
         else:
@@ -729,7 +729,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
             location = self.mysql_location
 
         server = 'clitest-vnetprovision-supplied-subnetid-' + resource_random_name
-        resource_group = server + '-rg'
+        resource_group = 'clitest.vnetprovision-supplied-subnetid-' + resource_random_name + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
         # Scenario : Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
@@ -776,8 +776,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
 
         # flexible-servers
         server = 'clitest-vnetprovision-diff-rg-subnetid-' + resource_random_name
-        resource_group_1 = server + '-rg1'
-        resource_group_2 = server + '-rg2'
+        resource_group_1 = 'clitest.vnetprovision-diff-rg-subnetid-' + resource_random_name + '-rg1'
+        resource_group_2 = 'clitest.vnetprovision-diff-rg-subnetid-' + resource_random_name + '-rg2'
         self.cmd('group create -n {} -l {}'.format(resource_group_1, location))
         self.cmd('group create -n {} -l {}'.format(resource_group_2, location))
 
@@ -826,10 +826,11 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
             location = self.postgres_location
         elif database_engine == 'mysql':
             location = self.mysql_location
+        
 
         server = 'clitest-vnetprovision-dns-no-private-' + resource_random_name
         dns_zone = 'testdnsname.postgres.database.azure.com'
-        resource_group = server + '-rg'
+        resource_group = 'clitest.vnetprovision-dns-no-private-' + resource_random_name + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
         self.cmd('{} flexible-server create -g {} -n {} -l {} --private-dns-zone {}'

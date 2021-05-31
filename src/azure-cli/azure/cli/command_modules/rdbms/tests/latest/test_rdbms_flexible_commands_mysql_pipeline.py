@@ -37,7 +37,6 @@ from .conftest import mysql_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNE
 SERVER_NAME_PREFIX = 'clitest-'
 RG_NAME_PREFIX = 'clitest.rg'
 SERVER_NAME_MAX_LENGTH = 50
-RG_NAME_PREFIX = 'rg'
 RG_NAME_MAX_LENGTH = 50
 SOURCE_RG = 'clitest-do-not-delete'
 SOURCE_SERVER_PREFIX = 'clitest-server-mysql-'
@@ -80,70 +79,120 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_password(self):
-        self._test_flexible_server_update_password('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_password('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_storage(self):
-        self._test_flexible_server_update_storage('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_storage('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_backup_retention(self):
-        self._test_flexible_server_update_backup_retention('mysql', self.resource_group, self.server)
-
+        try:
+            self._test_flexible_server_update_backup_retention('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
+    
     @AllowLargeResponse()
     @pytest.mark.order(6)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_scale_up(self):
-        self._test_flexible_server_update_scale_up('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_scale_up('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_scale_down(self):
-        self._test_flexible_server_update_scale_down('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_scale_down('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_mmw(self):
-        self._test_flexible_server_update_mmw('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_mmw('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_tag(self):
-        self._test_flexible_server_update_tag('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_tag('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(10)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_restart(self):
-        self._test_flexible_server_restart('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_restart('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_stop(self):
-        self._test_flexible_server_stop('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_stop('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(12)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_start(self):
-        self._test_flexible_server_start('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_start('mysql', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(13)
@@ -202,14 +251,24 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_up(self):
-        self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server)
+            write_succeeded_result(IOPS_SERVER_FILE)
+        except:
+            write_failed_result(IOPS_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_down(self):
-        self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server)
+            write_succeeded_result(IOPS_SERVER_FILE)
+        except:
+            write_failed_result(IOPS_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
@@ -360,35 +419,60 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_update_parameter(self):
-        self._test_flexible_server_high_availability_update_parameter('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_update_parameter('mysql', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_restart(self):
-        self._test_flexible_server_high_availability_restart('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_restart('mysql', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_stop(self):
-        self._test_flexible_server_high_availability_stop('mysql', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_stop('mysql', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_start(self):
-        self._test_flexible_server_high_availability_start('mysql', self.resource_group, self.server)
-    
+        try:
+            self._test_flexible_server_high_availability_start('mysql', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
+            assert False
+
     @AllowLargeResponse()
     @pytest.mark.order(7)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_delete(self):
-        self._test_flexible_server_high_availability_delete('mysql', self.resource_group, self.server)
-    
+        try:
+            self._test_flexible_server_high_availability_delete('mysql', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
+            assert False
+
     @AllowLargeResponse()
     @pytest.mark.order(8)
     @pytest.mark.execution_timeout(5400)
@@ -421,7 +505,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(1)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(5400)
     def test_mysql_flexible_server_replica_prepare(self):
         try:
             self.cmd('az group create --location {} --name {}'.format(mysql_location, self.resource_group))
@@ -434,7 +518,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(5400)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_create(self):
         try:
@@ -446,14 +530,19 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(5400)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_list(self):
-        self._test_flexible_server_replica_list('mysql', self.resource_group, self.master_server)
+        try:
+            self._test_flexible_server_replica_list('mysql', self.resource_group, self.master_server)
+            write_succeeded_result(REPLICA_SERVER_FILE)
+        except:
+            write_failed_result(REPLICA_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(5400)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_stop(self):
         try:
@@ -465,7 +554,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(5400)
     @pytest.mark.usefixtures("replica_server_provision_check")
     def test_mysql_flexible_server_replica_delete_source(self):
         try:

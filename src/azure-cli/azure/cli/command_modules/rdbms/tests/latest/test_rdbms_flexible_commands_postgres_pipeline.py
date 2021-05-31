@@ -80,70 +80,120 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_password(self):
-        self._test_flexible_server_update_password('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_password('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_storage(self):
-        self._test_flexible_server_update_storage('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_storage('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_backup_retention(self):
-        self._test_flexible_server_update_backup_retention('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_backup_retention('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_scale_up(self):
-        self._test_flexible_server_update_scale_up('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_scale_up('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_scale_down(self):
-        self._test_flexible_server_update_scale_down('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_scale_down('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_mmw(self):
-        self._test_flexible_server_update_mmw('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_update_mmw('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_tag(self):
-        self._test_flexible_server_update_tag('postgres', self.resource_group, self.server)
-
+        try:
+            self._test_flexible_server_update_tag('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
+    
     @AllowLargeResponse()
     @pytest.mark.order(10)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_restart(self):
-        self._test_flexible_server_restart('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_restart('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_stop(self):
-        self._test_flexible_server_stop('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_stop('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(12)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_start(self):
-        self._test_flexible_server_start('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_start('postgres', self.resource_group, self.server)
+            write_succeeded_result(REGULAR_SERVER_FILE)
+        except:
+            write_failed_result(REGULAR_SERVER_FILE)
+            assert False
 
     @AllowLargeResponse()
     @pytest.mark.order(13)
@@ -214,50 +264,77 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_postgres_flexible_server_high_availability_disable(self):
-        self._test_flexible_server_high_availability_disable('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_disable('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_postgres_flexible_server_high_availability_enable(self):
-        self._test_flexible_server_high_availability_enable('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_enable('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
-    @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_high_availability_update_scale_up(self):
-        self._test_flexible_server_high_availability_update_scale_up('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_update_scale_up('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_postgres_flexible_server_high_availability_update_parameter(self):
-        self._test_flexible_server_high_availability_update_parameter('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_update_parameter('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_postgres_flexible_server_high_availability_restart(self):
-        self._test_flexible_server_high_availability_restart('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_restart('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_postgres_flexible_server_high_availability_stop(self):
-        self._test_flexible_server_high_availability_stop('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_stop('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_postgres_flexible_server_high_availability_start(self):
-        self._test_flexible_server_high_availability_start('postgres', self.resource_group, self.server)
+        try:
+            self._test_flexible_server_high_availability_start('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
     @pytest.mark.order(10)
