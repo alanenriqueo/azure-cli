@@ -57,7 +57,7 @@ class RdbmsScenarioTest(ScenarioTest):
         if 'MySql' in class_name:
             class_name = class_name.replace('MySqlFlexibleServer', '')
         else:
-            class_name = class_name.replace('PostgresFlexibleserver', '')
+            class_name = class_name.replace('PostgresFlexibleServer', '')
         class_name = class_name.replace('ScenarioTest', '')
 
         if self.in_recording:
