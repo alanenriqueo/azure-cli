@@ -419,7 +419,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
         self.assertEqual(show_result['delegatedSubnetArguments']['subnetArmResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                             self.get_subscription_id(), resource_group, 'Vnet' + server[6:], 'Subnet' + server[6:]))
+                             self.get_subscription_id(), resource_group, 'Vnet' + server, 'Subnet' + server))
 
     def _test_flexible_server_vnet_ha_server_create(self, database_engine, resource_group, server):
 
@@ -432,7 +432,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
 
         self.assertEqual(show_result['delegatedSubnetArguments']['subnetArmResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
-                             self.get_subscription_id(), resource_group, 'Vnet' + server[6:], 'Subnet' + server[6:]))
+                             self.get_subscription_id(), resource_group, 'Vnet' + server, 'Subnet' + server))
 
     def _test_flexible_server_vnet_server_update_scale_up(self, database_engine, resource_group, server):
 
@@ -758,7 +758,6 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server),
                  checks=NoneCheck())
 
-
     def _test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self, database_engine):
         # flexible-server create
         if self.cli_ctx.local_context.is_on:
@@ -807,7 +806,6 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         # delete all servers
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group_2, server),
                  checks=NoneCheck())
-
 
     def _test_flexible_server_vnet_provision_create_without_parameters(self, database_engine):
         if database_engine == 'postgres':
