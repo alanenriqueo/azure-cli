@@ -728,8 +728,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         elif database_engine == 'mysql':
             location = self.mysql_location
 
-        server = 'clitest-vnetprovision-supplied-subnetid-' + resource_random_name
-        resource_group = 'clitest.vnetprovision-supplied-subnetid-' + resource_random_name + '-rg'
+        server = 'clitest-subnetid-' + resource_random_name
+        resource_group = 'clitest.subnetid-' + resource_random_name + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
         # Scenario : Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
@@ -774,9 +774,9 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         subnet_prefix_1 = '172.0.0.0/24'
 
         # flexible-servers
-        server = 'clitest-vnetprovision-diff-rg-subnetid-' + resource_random_name
-        resource_group_1 = 'clitest.vnetprovision-diff-rg-subnetid-' + resource_random_name + '-rg1'
-        resource_group_2 = 'clitest.vnetprovision-diff-rg-subnetid-' + resource_random_name + '-rg2'
+        server = 'clitest-diffrg-subnet-' + resource_random_name
+        resource_group_1 = 'clitest.diffrg-subnet-' + resource_random_name + '-rg1'
+        resource_group_2 = 'clitest.diffrg-subnet-' + resource_random_name + '-rg2'
         self.cmd('group create -n {} -l {}'.format(resource_group_1, location))
         self.cmd('group create -n {} -l {}'.format(resource_group_2, location))
 
