@@ -22,18 +22,18 @@ from .test_rdbms_flexible_commands_local_context import (
 from .test_rdbms_flexible_commands import (
     ServerPreparer
 )
-from .conftest import postgres_location
+from .conftest import test_location
 
-if postgres_location is None:
-    postgres_location = 'eastus2euap'
+if test_location is None:
+    test_location = 'eastus2euap'
 
 
 # Local context test is separated out from the rest of the test due to daily pipeline run issue
 class PostgresFlexibleServerLocalContextScenarioTest(FlexibleServerLocalContextScenarioTest):
 
-    postgres_location = postgres_location
+    test_location = test_location
 
     @AllowLargeResponse()
-    @ResourceGroupPreparer(location=postgres_location)
+    @ResourceGroupPreparer(location=test_location)
     def test_postgres_flexible_server_local_context(self, resource_group):
         self._test_flexible_server_local_context('postgres', resource_group)

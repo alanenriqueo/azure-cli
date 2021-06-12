@@ -22,18 +22,18 @@ from .test_rdbms_flexible_commands_local_context import (
 from .test_rdbms_flexible_commands import (
     ServerPreparer
 )
-from .conftest import mysql_location
+from .conftest import test_location
 
-if mysql_location is None:
-    mysql_location = 'eastus2euap'
+if test_location is None:
+    test_location = 'eastus2euap'
 
 
 # Local context test is separated out from the rest of the test due to daily pipeline run issue
 class MySqlFlexibleServerLocalContextScenarioTest(FlexibleServerLocalContextScenarioTest):
 
-    mysql_location = mysql_location
+    test_location = test_location
 
     @AllowLargeResponse()
-    @ResourceGroupPreparer(location=mysql_location)
+    @ResourceGroupPreparer(location=test_location)
     def test_mysql_flexible_server_local_context(self, resource_group):
         self._test_flexible_server_local_context('mysql', resource_group)

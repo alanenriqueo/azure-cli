@@ -4,8 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import pytest
 
-mysql_location = None
-postgres_location = None
+test_location = None
 resource_random_name = None
 
 
@@ -16,9 +15,8 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    global mysql_location, postgres_location, resource_random_name  # pylint:disable=global-statement
-    mysql_location = config.getoption('--mysql-location')
-    postgres_location = config.getoption('--postgres-location')
+    global test_location, resource_random_name  # pylint:disable=global-statement
+    test_location = config.getoption('--test-location')
     resource_random_name = config.getoption('--resource-random-name')
 
 
