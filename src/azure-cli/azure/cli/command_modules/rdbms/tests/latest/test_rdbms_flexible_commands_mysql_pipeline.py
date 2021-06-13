@@ -429,6 +429,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
                 f.write("FALSE")
 
     @pytest.mark.order(1)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     def test_mysql_flexible_server_high_availability_prepare(self):
         self.cmd('az group create --location {} --name {}'.format(test_location, self.resource_group))
 
@@ -436,6 +437,13 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     @pytest.mark.order(2)
     @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_high_availability_create(self):
+        with open(SINGLE_AVAILABILITY_FILE, "r") as f:
+            result = f.readline()
+
+            if result == "TRUE":
+                write_failed_result(HA_SERVER_FILE)
+                pytest.skip("skipping the test due to non supported feature in single availability zone")
+
         try:
             self._test_flexible_server_high_availability_create('mysql', self.resource_group, self.server)
             write_succeeded_result(HA_SERVER_FILE)
@@ -446,6 +454,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     @AllowLargeResponse()
     @pytest.mark.order(3)
     @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_update_parameter(self):
         try:
@@ -458,6 +467,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     @AllowLargeResponse()
     @pytest.mark.order(4)
     @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_restart(self):
         try:
@@ -470,6 +480,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     @AllowLargeResponse()
     @pytest.mark.order(5)
     @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_stop(self):
         try:
@@ -482,6 +493,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     @AllowLargeResponse()
     @pytest.mark.order(6)
     @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_start(self):
         try:
@@ -493,6 +505,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_delete(self):
         try:
@@ -504,6 +517,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.execution_timeout(5400)
     def test_mysql_flexible_server_high_availability_restore(self):
         self._test_flexible_server_high_availability_restore('mysql', SOURCE_RG, SOURCE_HA_SERVER_PREFIX + self.location, self.restore_server)

@@ -269,6 +269,13 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_create(self):
+        with open(SINGLE_AVAILABILITY_FILE, "r") as f:
+            result = f.readline()
+
+            if result == "TRUE":
+                write_failed_result(HA_SERVER_FILE)
+                pytest.skip("skipping the test due to non supported feature in single availability zone")
+
         try:
             self._test_flexible_server_high_availability_create('postgres', self.resource_group, self.server)
             write_succeeded_result(HA_SERVER_FILE)
@@ -361,6 +368,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(10)
+    @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_delete(self):
         self._test_flexible_server_high_availability_delete('postgres', self.resource_group, self.server)
