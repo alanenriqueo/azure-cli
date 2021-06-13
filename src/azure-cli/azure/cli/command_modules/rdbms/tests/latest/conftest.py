@@ -3,14 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import pytest
-
 test_location = None
 resource_random_name = None
 
 
 def pytest_addoption(parser):
-    parser.addoption("--mysql-location", action="store", default="eastus2euap")
-    parser.addoption("--postgres-location", action="store", default="eastus2euap")
+    parser.addoption("--test-location", action="store", default="eastus2euap")
     parser.addoption("--resource-random-name", action="store", default="clirecording")
 
 
@@ -27,6 +25,7 @@ HA_SERVER_FILE = './ha_server_cache.txt'
 PROXY_SERVER_FILE = './proxy_server_cache.txt'
 IOPS_SERVER_FILE = './iops_server_cache.txt'
 REPLICA_SERVER_FILE = './replica_server_cache.txt'
+SINGLE_AVAILABILITY_FILE = './single_availability.txt'
 
 def skip_if_test_failed(filename):
     with open(filename, "r") as f:
@@ -34,6 +33,14 @@ def skip_if_test_failed(filename):
 
     if result == 'FAIL':
         pytest.skip("skipping the test due to dependent resource provision failure")
+
+@pytest.fixture()
+def single_availability_zone_check():
+    with open(SINGLE_AVAILABILITY_FILE, "r") as f:
+        result = f.readline()
+
+    if result == "TRUE":
+        pytest.skip("skipping the test due to non supported feature in single availability zone")
 
 @pytest.fixture()
 def regular_server_provision_check():

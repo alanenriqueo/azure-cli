@@ -32,7 +32,8 @@ from .test_rdbms_flexible_commands_pipeline import (
     write_failed_result,
     write_succeeded_result
 )
-from .conftest import test_location, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE, IOPS_SERVER_FILE, REPLICA_SERVER_FILE
+from .conftest import test_location, SINGLE_AVAILABILITY_FILE, REGULAR_SERVER_FILE, VNET_SERVER_FILE, VNET_HA_SERVER_FILE, HA_SERVER_FILE, PROXY_SERVER_FILE, IOPS_SERVER_FILE, REPLICA_SERVER_FILE
+from ..._flexible_server_util import get_mysql_list_skus_info
 
 SERVER_NAME_PREFIX = 'clitest-'
 RG_NAME_PREFIX = 'clitest.rg'
@@ -58,6 +59,13 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
         self.server3 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier2')
         self.restore_server = 'restore-' + self.server[:55]
         self.location = test_location
+        _, single_az = get_mysql_list_skus_info(self, test_location)
+        with open(SINGLE_AVAILABILITY_FILE, "w") as f:
+            if single_az:
+                f.write("TRUE")
+            else:
+                f.write("FALSE")
+
 
     @pytest.mark.order(1)
     def test_mysql_flexible_server_mgmt_prepare(self):
@@ -287,6 +295,12 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
         self.restore_server = 'restore-' + self.server[:55]
         self.restore_server2 = 'restore-' + self.server2[:55]
         self.current_time = datetime.utcnow()
+        _, single_az = get_mysql_list_skus_info(self, test_location)
+        with open(SINGLE_AVAILABILITY_FILE, "w") as f:
+            if single_az:
+                f.write("TRUE")
+            else:
+                f.write("FALSE")
 
     @pytest.mark.order(1)
     def test_mysql_flexible_server_vnet_server_prepare(self):
@@ -307,6 +321,13 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     @pytest.mark.order(3)
     @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_vnet_ha_server_create(self):
+        with open(SINGLE_AVAILABILITY_FILE, "r") as f:
+            result = f.readline()
+
+            if result == "TRUE":
+                write_failed_result(VNET_HA_SERVER_FILE)
+                pytest.skip("skipping the test due to non supported feature in single availability zone")
+
         try:
             self._test_flexible_server_vnet_ha_server_create('mysql', self.resource_group, self.server2)
             write_succeeded_result(VNET_HA_SERVER_FILE)
@@ -323,6 +344,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     
     @AllowLargeResponse()
     @pytest.mark.order(5)
+    @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("vnet_ha_server_provision_check")
     def test_mysql_flexible_server_vnet_ha_server_delete(self):
         self._test_flexible_server_vnet_server_delete('mysql', self.resource_group, self.server2)
@@ -339,11 +361,12 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     def test_mysql_flexible_server_vnet_server_restore(self):
         self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_SERVER_PREFIX + self.location, self.restore_server)
 
-    # @AllowLargeResponse()
-    # @pytest.mark.order(8)
-    # @pytest.mark.execution_timeout(5400)
-    # def test_mysql_flexible_server_vnet_ha_server_restore(self):
-    #     self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_HA_SERVER_PREFIX + self.location, self.restore_server2)
+    @AllowLargeResponse()
+    @pytest.mark.order(8)
+    @pytest.mark.execution_timeout(5400)
+    @pytest.mark.usefixtures("single_availability_zone_check")
+    def test_mysql_flexible_server_vnet_ha_server_restore(self):
+        self._test_flexible_server_vnet_server_restore('mysql', SOURCE_RG, SOURCE_VNET_HA_SERVER_PREFIX + self.location, self.restore_server2)
 
 
 class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResourceMgmtScenarioTest):
@@ -398,6 +421,12 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
         self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'ha')
         self.restore_server = 'restore-' + self.server[:55]
+        _, single_az = get_mysql_list_skus_info(self, test_location)
+        with open(SINGLE_AVAILABILITY_FILE, "w") as f:
+            if single_az:
+                f.write("TRUE")
+            else:
+                f.write("FALSE")
 
     @pytest.mark.order(1)
     def test_mysql_flexible_server_high_availability_prepare(self):
