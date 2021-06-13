@@ -519,22 +519,26 @@ class PostgresFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisio
     test_location = test_location
 
     @AllowLargeResponse()
+    @live_only()
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_provision_supplied_subnetid(self):
         # Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
         self._test_flexible_server_vnet_provision_existing_supplied_subnetid('postgres')
 
     @AllowLargeResponse()
+    @live_only()
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
         self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('postgres')
     
     @AllowLargeResponse()
+    @live_only()
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_provision_create_without_parameters(self):
         self._test_flexible_server_vnet_provision_create_without_parameters('postgres')
 
     @AllowLargeResponse()
+    @live_only()
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_provision_private_dns_zone_without_private(self):
         self._test_flexible_server_vnet_provision_private_dns_zone_without_private('postgres')
