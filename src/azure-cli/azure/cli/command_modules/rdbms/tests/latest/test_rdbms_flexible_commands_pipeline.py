@@ -562,10 +562,8 @@ class FlexibleServerValidatorScenarioTest(ScenarioTest):
     def _test_mgmt_validator(self, database_engine, resource_group):
 
         RANDOM_VARIABLE_MAX_LENGTH = 30
-        if database_engine == 'postgres':
-            location = self.postgres_location
-        elif database_engine == 'mysql':
-            location = self.mysql_location
+        location = self.test_location
+        
         invalid_version = self.create_random_name('version', RANDOM_VARIABLE_MAX_LENGTH)
         invalid_sku_name = self.create_random_name('sku_name', RANDOM_VARIABLE_MAX_LENGTH)
         invalid_tier = self.create_random_name('tier', RANDOM_VARIABLE_MAX_LENGTH)
@@ -723,10 +721,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         if self.cli_ctx.local_context.is_on:
             self.cmd('local-context off')
 
-        if database_engine == 'postgres':
-            location = self.postgres_location
-        elif database_engine == 'mysql':
-            location = self.mysql_location
+        location = self.test_location
 
         server = 'clitest-subnetid-' + resource_random_name
         resource_group = 'clitest.subnetid-' + resource_random_name + '-rg'
@@ -763,10 +758,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         if self.cli_ctx.local_context.is_on:
             self.cmd('local-context off')
 
-        if database_engine == 'postgres':
-            location = self.postgres_location
-        elif database_engine == 'mysql':
-            location = self.mysql_location
+        location = self.test_location
 
         vnet_name = 'clitestvnet7'
         subnet_name = 'clitestsubnet7'
@@ -808,10 +800,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
                  checks=NoneCheck())
 
     def _test_flexible_server_vnet_provision_create_without_parameters(self, database_engine):
-        if database_engine == 'postgres':
-            location = self.postgres_location
-        elif database_engine == 'mysql':
-            location = self.mysql_location
+        
+        location = self.test_location
 
         result = self.cmd('{} flexible-server create -l {}'.format(database_engine, location)).get_output_in_json()
         _, rg, server_name, _ = get_id_components(result['id'])
@@ -820,11 +810,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         self.cmd('az group delete --name {} --yes --no-wait'.format(rg))
     
     def _test_flexible_server_vnet_provision_private_dns_zone_without_private(self, database_engine):
-        if database_engine == 'postgres':
-            location = self.postgres_location
-        elif database_engine == 'mysql':
-            location = self.mysql_location
         
+        location = self.test_location
 
         server = 'clitest-vnetprovision-dns-no-private-' + resource_random_name
         dns_zone = 'testdnsname.postgres.database.azure.com'
@@ -846,13 +833,12 @@ class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
         # flexible-server create
         if self.cli_ctx.local_context.is_on:
             self.cmd('local-context off')
+        location = self.test_location
 
         if database_engine == 'postgres':
             sku_name = 'Standard_D2s_v3'
-            location = self.postgres_location
         elif database_engine == 'mysql':
             sku_name = 'Standard_B1ms'
-            location = self.mysql_location
 
         # flexible-servers
         servers = ['clitest-publicaccess-server1' + resource_random_name,
