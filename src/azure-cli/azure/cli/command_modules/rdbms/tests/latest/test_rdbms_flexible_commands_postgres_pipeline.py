@@ -311,18 +311,6 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
-    def test_postgres_flexible_server_high_availability_update_scale_up(self):
-        try:
-            self._test_flexible_server_high_availability_update_scale_up('postgres', self.resource_group, self.server)
-            write_succeeded_result(HA_SERVER_FILE)
-        except:
-            write_failed_result(HA_SERVER_FILE)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(6)
-    @pytest.mark.execution_timeout(3600)
-    @pytest.mark.usefixtures("ha_server_provision_check")
-    @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_update_parameter(self):
         try:
             self._test_flexible_server_high_availability_update_parameter('postgres', self.resource_group, self.server)
@@ -331,7 +319,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
             write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
-    @pytest.mark.order(7)
+    @pytest.mark.order(6)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
@@ -343,7 +331,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
             write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
-    @pytest.mark.order(8)
+    @pytest.mark.order(7)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
@@ -355,13 +343,25 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
             write_failed_result(HA_SERVER_FILE)
 
     @AllowLargeResponse()
-    @pytest.mark.order(9)
+    @pytest.mark.order(8)
     @pytest.mark.execution_timeout(3600)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_start(self):
         try:
             self._test_flexible_server_high_availability_start('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_failed_result(HA_SERVER_FILE)
+
+    @AllowLargeResponse()
+    @pytest.mark.order(9)
+    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("ha_server_provision_check")
+    @pytest.mark.usefixtures("single_availability_zone_check")
+    def test_postgres_flexible_server_high_availability_update_scale_up(self):
+        try:
+            self._test_flexible_server_high_availability_update_scale_up('postgres', self.resource_group, self.server)
             write_succeeded_result(HA_SERVER_FILE)
         except:
             write_failed_result(HA_SERVER_FILE)
