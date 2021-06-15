@@ -175,6 +175,9 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
                      .format(resource_group, server2),
                      checks=[JMESPathCheck('sku.tier', 'MemoryOptimized'),
                              JMESPathCheck('sku.name', 'Standard_E2s_v3')])
+        
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server1))
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server2))
 
     def _test_flexible_server_create_different_version(self, database_engine, resource_group, server):
 
@@ -186,6 +189,8 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
                      .format(resource_group, server),
                      checks=[JMESPathCheck('version', 11)])
 
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
+
     def _test_flexible_server_create_select_zone(self, database_engine, resource_group, server):
 
         if database_engine == 'postgres':
@@ -195,6 +200,8 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
             self.cmd('postgres flexible-server show -g {} -n {}'
                      .format(resource_group, server),
                      checks=[JMESPathCheck('availabilityZone', 1)])
+            
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
 
     def _test_flexible_server_update_password(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server update -g {} -n {} -p randompw321##@!'
@@ -215,10 +222,10 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
         # Scale up
         if database_engine == 'postgres':
             tier = 'MemoryOptimized'
-            sku_name = 'Standard_E16s_v3'
+            sku_name = 'Standard_E8s_v3'
         elif database_engine == 'mysql':
             tier = 'GeneralPurpose'
-            sku_name = 'Standard_D16s_v3'
+            sku_name = 'Standard_D8s_v3'
 
         self.cmd('{} flexible-server update -g {} -n {} --tier {} --sku-name {}'
                  .format(database_engine, resource_group, server, tier, sku_name),
