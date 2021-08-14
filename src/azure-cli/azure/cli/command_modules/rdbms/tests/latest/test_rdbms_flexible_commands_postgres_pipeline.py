@@ -368,13 +368,25 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(10)
+    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("ha_server_provision_check")
+    @pytest.mark.usefixtures("single_availability_zone_check")
+    def test_postgres_flexible_server_high_availability_failover(self):
+        try:
+            self._test_flexible_server_high_availability_failover('postgres', self.resource_group, self.server)
+            write_succeeded_result(HA_SERVER_FILE)
+        except:
+            write_succeeded_result(HA_SERVER_FILE)
+
+    @AllowLargeResponse()
+    @pytest.mark.order(11)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_delete(self):
         self._test_flexible_server_high_availability_delete('postgres', self.resource_group, self.server)
     
     @AllowLargeResponse()
-    @pytest.mark.order(11)
+    @pytest.mark.order(12)
     @pytest.mark.execution_timeout(5400)
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_restore(self):
@@ -538,12 +550,6 @@ class PostgresFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisio
     @pytest.mark.execution_timeout(3600)
     def test_postgres_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
         self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('postgres')
-    
-    @AllowLargeResponse()
-    @live_only()
-    @pytest.mark.execution_timeout(3600)
-    def test_postgres_flexible_server_vnet_provision_create_without_parameters(self):
-        self._test_flexible_server_vnet_provision_create_without_parameters('postgres')
 
     @AllowLargeResponse()
     @live_only()

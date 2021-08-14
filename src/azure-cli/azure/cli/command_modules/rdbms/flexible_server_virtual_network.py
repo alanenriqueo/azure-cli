@@ -194,31 +194,6 @@ def prepare_private_dns_zone(db_context, database_engine, resource_group, server
             private_dns_zone = server_name + '.' + private_dns_zone_suffix
         else:
             private_dns_zone = server_name + '.private.' + private_dns_zone_suffix
-<<<<<<< HEAD
-
-    #  resource ID input => check subscription and change client
-    elif not _check_if_resource_name(private_dns_zone) and is_valid_resource_id(private_dns_zone):
-        subscription, dns_rg, private_dns_zone, _ = get_id_components(private_dns_zone)
-        if private_dns_zone[-len(private_dns_zone_suffix):] != private_dns_zone_suffix:
-            raise ValidationError('The suffix of the private DNS zone should be "{}"'.format(private_dns_zone_suffix))
-
-        if subscription != get_subscription_id(cmd.cli_ctx):
-            logger.warning('The provided private DNS zone ID is in different subscription from the server')
-            resource_client = resource_client_factory(cmd.cli_ctx, subscription_id=subscription)
-            private_dns_client = private_dns_client_factory(cmd.cli_ctx, subscription_id=subscription)
-            private_dns_link_client = private_dns_link_client_factory(cmd.cli_ctx, subscription_id=subscription)
-        _resource_group_verify_and_create(resource_client, dns_rg, location)
-    #  check Invalid resource ID or Name format
-    elif _check_if_resource_name(private_dns_zone) and not is_valid_resource_name(private_dns_zone) \
-            or not _check_if_resource_name(private_dns_zone) and not is_valid_resource_id(private_dns_zone):
-        raise ValidationError("Check if the private dns zone name or Id is in correct format.")
-    #  Invalid resource name suffix check
-    elif _check_if_resource_name(private_dns_zone) and private_dns_zone[-len(private_dns_zone_suffix):] != private_dns_zone_suffix:
-        raise ValidationError('The suffix of the private DNS zone should be in "{}" format'.format(private_dns_zone_suffix))
-
-    link = VirtualNetworkLink(location='global', virtual_network=SubResource(id=vnet.id))
-    link.registration_enabled = False
-=======
     elif not _is_resource_name(private_dns_zone) and is_valid_resource_id(private_dns_zone):
         dns_subscription, dns_rg, private_dns_zone, _ = get_id_components(private_dns_zone)
 
@@ -236,7 +211,6 @@ def prepare_private_dns_zone(db_context, database_engine, resource_group, server
     resource_client = resource_client_factory(cmd.cli_ctx, subscription_id=subscription_id)
     private_dns_client = private_dns_client_factory(cmd.cli_ctx, subscription_id=subscription_id)
     private_dns_link_client = private_dns_link_client_factory(cmd.cli_ctx, subscription_id=subscription_id)
->>>>>>> 8a4ae017516393388c01b4fff16942e86b446294
 
     # check existence DNS zone and change resource group
     if dns_rg is not None:

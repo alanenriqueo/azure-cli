@@ -425,13 +425,21 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
+    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.usefixtures("ha_server_provision_check")
+    @pytest.mark.usefixtures("single_availability_zone_check")
+    def test_mysql_flexible_server_high_availability_failover(self):
+        self._test_flexible_server_high_availability_failover('mysql', self.resource_group, self.server)
+
+    @AllowLargeResponse()
+    @pytest.mark.order(8)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_delete(self):
         self._test_flexible_server_high_availability_delete('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
-    @pytest.mark.order(8)
+    @pytest.mark.order(9)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.execution_timeout(5400)
     def test_mysql_flexible_server_high_availability_restore(self):
@@ -528,11 +536,6 @@ class MySqlFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisionSc
     @pytest.mark.execution_timeout(3600)
     def test_mysql_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
         self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('mysql')
-    
-    @AllowLargeResponse()
-    @pytest.mark.execution_timeout(3600)
-    def test_mysql_flexible_server_vnet_provision_create_without_parameters(self):
-        self._test_flexible_server_vnet_provision_create_without_parameters('mysql')
 
 
 class MySqlFlexibleServerPublicAccessMgmtScenarioTest(FlexibleServerPublicAccessMgmtScenarioTest):
