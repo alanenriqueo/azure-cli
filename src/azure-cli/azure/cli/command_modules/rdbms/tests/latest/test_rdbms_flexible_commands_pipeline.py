@@ -119,7 +119,6 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
             sku_name = 'Standard_B1ms'
             storage_size = 32
             version = '5.7'
-        storage_size_mb = storage_size * 1024
         backup_retention = 7
 
         self.cmd('{} flexible-server create -l {} -g {} -n {} --public-access none'
@@ -130,7 +129,7 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
                        JMESPathCheck('sku.name', sku_name),
                        JMESPathCheck('sku.tier', tier),
                        JMESPathCheck('version', version),
-                       JMESPathCheck('storage.storageSizeGB', storage_size_mb),
+                       JMESPathCheck('storage.storageSizeGb', storage_size),
                        JMESPathCheck('backup.backupRetentionDays', backup_retention)]
 
         self.cmd('{} flexible-server show -g {} -n {}'
@@ -210,7 +209,7 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
     def _test_flexible_server_update_storage(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server update -g {} -n {} --storage-size 256'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('storage.storageSizeGb', 256 * 1024)])
+                 checks=[JMESPathCheck('storage.storageSizeGb', 256)])
 
     def _test_flexible_server_update_backup_retention(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server update -g {} -n {} --backup-retention {}'
@@ -619,7 +618,6 @@ class FlexibleServerValidatorScenarioTest(ScenarioTest):
             else:
                 sku_name = 'Standard_D2ds_v4'
             storage_size = 32
-        storage_size_mb = storage_size * 1024
         backup_retention = 10
 
         list_checks = [JMESPathCheck('name', server),
@@ -627,7 +625,7 @@ class FlexibleServerValidatorScenarioTest(ScenarioTest):
                        JMESPathCheck('sku.name', sku_name),
                        JMESPathCheck('sku.tier', tier),
                        JMESPathCheck('version', version),
-                       JMESPathCheck('storage.storageSizeGb', storage_size_mb),
+                       JMESPathCheck('storage.storageSizeGb', storage_size),
                        JMESPathCheck('backup.backupRetentionDays', backup_retention)]
 
         self.cmd('{} flexible-server create -g {} -n {} -l {} --tier {} --version {} --sku-name {} --storage-size {} --backup-retention {} --public-access none'
