@@ -130,8 +130,8 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
                        JMESPathCheck('sku.name', sku_name),
                        JMESPathCheck('sku.tier', tier),
                        JMESPathCheck('version', version),
-                       JMESPathCheck('storageProfile.storageMb', storage_size_mb),
-                       JMESPathCheck('storageProfile.backupRetentionDays', backup_retention)]
+                       JMESPathCheck('storage.storageSizeGB', storage_size_mb),
+                       JMESPathCheck('backup.backupRetentionDays', backup_retention)]
 
         self.cmd('{} flexible-server show -g {} -n {}'
                  .format(database_engine, resource_group, server), checks=list_checks)
@@ -210,12 +210,12 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
     def _test_flexible_server_update_storage(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server update -g {} -n {} --storage-size 256'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('storageProfile.storageMb', 256 * 1024)])
+                 checks=[JMESPathCheck('storage.storageSizeGb', 256 * 1024)])
 
     def _test_flexible_server_update_backup_retention(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server update -g {} -n {} --backup-retention {}'
                  .format(database_engine, resource_group, server, 17),
-                 checks=[JMESPathCheck('storageProfile.backupRetentionDays', 17)])
+                 checks=[JMESPathCheck('storage.backupRetentionDays', 17)])
 
     def _test_flexible_server_update_scale_up(self, database_engine, resource_group, server):
 
@@ -316,21 +316,21 @@ class FlexibleServerIopsMgmtScenarioTest(RdbmsScenarioTest):
                  .format(database_engine, resource_group, server, self.location))
 
         self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('storageProfile.storageIops', 640)])
+                 checks=[JMESPathCheck('storage.iops', 640)])
 
     def _test_flexible_server_iops_scale_up(self, database_engine, resource_group, server):
 
         # SKU upgraded and IOPS value set smaller than free iops, max iops for the sku
         self.cmd('{} flexible-server update -g {} -n {} --tier GeneralPurpose --sku-name Standard_D8s_v3 --iops 400'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('storageProfile.storageIops', 900)])
+                 checks=[JMESPathCheck('storage.iops', 900)])
 
     def _test_flexible_server_iops_scale_down(self, database_engine, resource_group, server):
 
         # SKU downgraded and free iops is bigger than free iops
         self.cmd('{} flexible-server update -g {} -n {} --tier GeneralPurpose --sku-name Standard_D2s_v3 --storage-size 300'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('storageProfile.storageIops', 1200)])
+                 checks=[JMESPathCheck('storage.iops', 1200)])
 
 
 class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
@@ -342,13 +342,13 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
 
         self.cmd('{} flexible-server show -g {} -n {}'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('haEnabled', 'Enabled')])
+                 checks=[JMESPathCheck('highAvailability.mode', 'ZoneRedundant')])
 
     def _test_flexible_server_high_availability_disable(self, database_engine, resource_group, server):
 
         self.cmd('{} flexible-server update -g {} -n {} --high-availability Disabled'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('haEnabled', 'Disabled')])
+                 checks=[JMESPathCheck('highAvailability.mode', 'ZoneRedundant')])
 
         time.sleep(5 * 60)
 
@@ -356,7 +356,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
 
         self.cmd('{} flexible-server update -g {} -n {} --high-availability Enabled'
                  .format(database_engine, resource_group, server),
-                 checks=[JMESPathCheck('haEnabled', 'Enabled')])
+                 checks=[JMESPathCheck('highAvailability.mode', 'ZoneRedundant')])
 
     def _test_flexible_server_high_availability_update_scale_up(self, database_engine, resource_group, server):
 
@@ -448,7 +448,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
         
         show_result = self.cmd('{} flexible-server show -g {} -n {}'
                                .format(database_engine, resource_group, server),
-                               checks=[JMESPathCheck('haEnabled', 'Enabled')]).get_output_in_json()
+                               checks=[JMESPathCheck('highAvailability.mode', 'ZoneRedundant')]).get_output_in_json()
 
         self.assertEqual(show_result['delegatedSubnetArguments']['subnetArmResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
@@ -627,8 +627,8 @@ class FlexibleServerValidatorScenarioTest(ScenarioTest):
                        JMESPathCheck('sku.name', sku_name),
                        JMESPathCheck('sku.tier', tier),
                        JMESPathCheck('version', version),
-                       JMESPathCheck('storageProfile.storageMb', storage_size_mb),
-                       JMESPathCheck('storageProfile.backupRetentionDays', backup_retention)]
+                       JMESPathCheck('storage.storageSizeGb', storage_size_mb),
+                       JMESPathCheck('backup.backupRetentionDays', backup_retention)]
 
         self.cmd('{} flexible-server create -g {} -n {} -l {} --tier {} --version {} --sku-name {} --storage-size {} --backup-retention {} --public-access none'
                  .format(database_engine, resource_group, server, location, tier, version, sku_name, storage_size, backup_retention))
@@ -663,7 +663,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                      JMESPathCheck('sku.tier', result['sku']['tier']),
                      JMESPathCheck('sku.name', result['sku']['name']),
                      JMESPathCheck('replicationRole', 'Replica'),
-                     JMESPathCheck('sourceServerId', result['id']),
+                     JMESPathCheck('sourceServerResourceId', result['id']),
                      JMESPathCheck('replicaCapacity', '0')])
 
         time.sleep(20 * 60)
@@ -686,7 +686,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                      JMESPathCheck('name', replicas[0]),
                      JMESPathCheck('resourceGroup', resource_group),
                      JMESPathCheck('replicationRole', 'None'),
-                     JMESPathCheck('sourceServerId', ''),
+                     JMESPathCheck('sourceServerResourceId', ''),
                      JMESPathCheck('replicaCapacity', result['replicaCapacity'])])
 
         # test show server with replication info, master becomes normal server
@@ -694,7 +694,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                  .format(database_engine, resource_group, master_server),
                  checks=[
                      JMESPathCheck('replicationRole', 'None'),
-                     JMESPathCheck('sourceServerId', ''),
+                     JMESPathCheck('sourceServerResourceId', ''),
                      JMESPathCheck('replicaCapacity', result['replicaCapacity'])])
 
     def _test_flexible_server_replica_delete_source(self, database_engine, resource_group, master_server, replicas):
@@ -710,7 +710,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                      JMESPathCheck('resourceGroup', resource_group),
                      JMESPathCheck('sku.name', result['sku']['name']),
                      JMESPathCheck('replicationRole', 'Replica'),
-                     JMESPathCheck('sourceServerId', result['id']),
+                     JMESPathCheck('sourceServerResourceId', result['id']),
                      JMESPathCheck('replicaCapacity', '0')])
 
         self.cmd('{} flexible-server delete -g {} --name {} --yes'
@@ -720,7 +720,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                  .format(database_engine, resource_group, replicas[1]),
                  checks=[
                      JMESPathCheck('replicationRole', 'None'),
-                     JMESPathCheck('sourceServerId', ''),
+                     JMESPathCheck('sourceServerResourceId', ''),
                      JMESPathCheck('replicaCapacity', result['replicaCapacity'])])
 
     def _test_flexible_server_replica_delete(self, database_engine, resource_group, replicas):
@@ -832,7 +832,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
                  .format(database_engine, resource_group, server, location, dns_zone))
         
         self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
-                checks=[JMESPathCheck('privateDnsZoneArguments.privateDnsZoneArmResourceId', '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/privateDnsZones/{}'.format(
+                checks=[JMESPathCheck('network.privateDnsZoneArmResourceId', '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/privateDnsZones/{}'.format(
                              self.get_subscription_id(), resource_group, dns_zone))])
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server))
 
@@ -858,13 +858,13 @@ class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
         # create server
         self.cmd('{} flexible-server create -g {} -n {} --public-access {} -l {}'
                  .format(database_engine, resource_group, servers[0], 'all', location),
-                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('skuname', sku_name),
+                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('sku.name', sku_name),
                          StringContainCheck('AllowAll_')])
 
         # Case 2 : Provision a server with public access allowing all azure services
         self.cmd('{} flexible-server create -g {} -n {} --public-access {} -l {}'
                  .format(database_engine, resource_group, servers[1], '0.0.0.0', location),
-                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('skuname', sku_name),
+                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('sku.name', sku_name),
                          StringContainCheck('AllowAllAzureServicesAndResourcesWithinAzureIps_')])
 
         # delete all servers
