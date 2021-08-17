@@ -214,7 +214,7 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
     def _test_flexible_server_update_backup_retention(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server update -g {} -n {} --backup-retention {}'
                  .format(database_engine, resource_group, server, 17),
-                 checks=[JMESPathCheck('storage.backupRetentionDays', 17)])
+                 checks=[JMESPathCheck('backup.backupRetentionDays', 17)])
 
     def _test_flexible_server_update_scale_up(self, database_engine, resource_group, server):
 
