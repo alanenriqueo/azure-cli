@@ -73,7 +73,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_create(self):
         try:
             self._test_flexible_server_create('postgres', self.resource_group, self.server)
@@ -84,7 +84,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_password(self):
         try:
@@ -96,7 +96,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_storage(self):
         try:
@@ -108,7 +108,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_backup_retention(self):
         try:
@@ -120,7 +120,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_scale_up(self):
         try:
@@ -132,7 +132,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_scale_down(self):
         try:
@@ -144,7 +144,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_mmw(self):
         try:
@@ -156,7 +156,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_update_tag(self):
         try:
@@ -168,7 +168,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
     
     @AllowLargeResponse()
     @pytest.mark.order(10)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_restart(self):
         try:
@@ -180,7 +180,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_stop(self):
         try:
@@ -192,7 +192,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(12)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_start(self):
         try:
@@ -204,7 +204,7 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(13)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_list(self):
         self._test_flexible_server_list('postgres', self.resource_group)
@@ -212,33 +212,33 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
 
     @AllowLargeResponse()
     @pytest.mark.order(14)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_postgres_flexible_server_list_skus(self):
         self._test_flexible_server_list_skus('postgres', self.location)
 
     @AllowLargeResponse()
     @pytest.mark.order(15)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_create_non_default_tiers(self):
         self._test_flexible_server_create_non_default_tiers('postgres', self.resource_group, self.server2, self.server3)
 
     @AllowLargeResponse()
     @pytest.mark.order(16)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_create_select_zone(self):
         self._test_flexible_server_create_select_zone('postgres', self.resource_group, self.server4)
 
     @AllowLargeResponse()
     @pytest.mark.order(17)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_create_different_version(self):
         self._test_flexible_server_create_different_version('postgres', self.resource_group, self.server5)
 
     @AllowLargeResponse()
     @pytest.mark.order(18)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_restore(self):
         self._test_flexible_server_restore('postgres', SOURCE_RG, SOURCE_SERVER_PREFIX + self.location, self.restore_server)
 
@@ -266,7 +266,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_create(self):
         with open(SINGLE_AVAILABILITY_FILE, "r") as f:
@@ -284,7 +284,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_disable(self):
@@ -296,7 +296,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_enable(self):
@@ -308,7 +308,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_update_parameter(self):
@@ -320,7 +320,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_restart(self):
@@ -332,7 +332,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_stop(self):
@@ -344,7 +344,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_start(self):
@@ -356,7 +356,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_update_scale_up(self):
@@ -368,7 +368,7 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
 
     @AllowLargeResponse()
     @pytest.mark.order(10)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_postgres_flexible_server_high_availability_failover(self):
@@ -417,7 +417,7 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_vnet_server_create(self):
         try:
             self._test_flexible_server_vnet_server_create('postgres', self.resource_group, self.server)
@@ -427,7 +427,7 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_vnet_ha_server_create(self):
         with open(SINGLE_AVAILABILITY_FILE, "r") as f:
             result = f.readline()
@@ -444,14 +444,14 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("vnet_server_provision_check")
     def test_postgres_flexible_server_vnet_server_update_scale_up(self):
         self._test_flexible_server_vnet_server_update_scale_up('postgres', self.resource_group, self.server)
     
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("vnet_ha_server_provision_check")
     def test_postgres_flexible_server_vnet_ha_server_update_scale_up(self):
@@ -495,7 +495,7 @@ class PostgresFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyRes
 
     @AllowLargeResponse()
     @pytest.mark.order(1)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_proxy_resource_mgmt_prepare(self):
         try:
             self.cmd('az group create --location {} --name {}'.format(test_location, self.resource_group))
@@ -540,20 +540,20 @@ class PostgresFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisio
 
     @AllowLargeResponse()
     @live_only()
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_vnet_provision_supplied_subnetid(self):
         # Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
         self._test_flexible_server_vnet_provision_existing_supplied_subnetid('postgres')
 
     @AllowLargeResponse()
     @live_only()
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
         self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('postgres')
 
     @AllowLargeResponse()
     @live_only()
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_vnet_provision_private_dns_zone_without_private(self):
         self._test_flexible_server_vnet_provision_private_dns_zone_without_private('postgres')
 
@@ -565,6 +565,6 @@ class PostgresFlexibleServerPublicAccessMgmtScenarioTest(FlexibleServerPublicAcc
     @AllowLargeResponse()
     @ResourceGroupPreparer(location=test_location)
     @live_only()
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(7200)
     def test_postgres_flexible_server_public_access_mgmt(self, resource_group):
         self._test_flexible_server_public_access_mgmt('postgres', resource_group)

@@ -73,7 +73,7 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_create(self):
         try:
             self._test_flexible_server_create('mysql', self.resource_group, self.server)
@@ -84,77 +84,77 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_password(self):
         self._test_flexible_server_update_password('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_storage(self):
         self._test_flexible_server_update_storage('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_backup_retention(self):
         self._test_flexible_server_update_backup_retention('mysql', self.resource_group, self.server)
     
     @AllowLargeResponse()
     @pytest.mark.order(6)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_scale_up(self):
         self._test_flexible_server_update_scale_up('mysql', self.resource_group, self.server)\
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_scale_down(self):
         self._test_flexible_server_update_scale_down('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(8)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_mmw(self):
         self._test_flexible_server_update_mmw('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(9)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_update_tag(self):
         self._test_flexible_server_update_tag('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(10)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_restart(self):
         self._test_flexible_server_restart('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(11)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_stop(self):
         self._test_flexible_server_stop('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(12)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_start(self):
         self._test_flexible_server_start('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(13)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_list(self):
         self._test_flexible_server_list('mysql', self.resource_group)
@@ -162,20 +162,20 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
 
     @AllowLargeResponse()
     @pytest.mark.order(14)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("regular_server_provision_check")
     def test_mysql_flexible_server_list_skus(self):
         self._test_flexible_server_list_skus('mysql', self.location)
 
     @AllowLargeResponse()
     @pytest.mark.order(15)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_create_non_default_tiers(self):
         self._test_flexible_server_create_non_default_tiers('mysql', self.resource_group, self.server2, self.server3)
     
     @AllowLargeResponse()
     @pytest.mark.order(17)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_restore(self):
         self._test_flexible_server_restore('mysql', SOURCE_RG, SOURCE_SERVER_PREFIX + self.location, self.restore_server)
 
@@ -195,7 +195,7 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_iops_create(self):
         try:
             self._test_flexible_server_iops_create('mysql', self.resource_group, self.server)
@@ -206,14 +206,14 @@ class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_up(self):
         self._test_flexible_server_iops_scale_up('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("iops_server_provision_check")
     def test_mysql_flexible_server_iops_scale_down(self):
         self._test_flexible_server_iops_scale_down('mysql', self.resource_group, self.server)
@@ -248,7 +248,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_vnet_server_create(self):
         try:
             self._test_flexible_server_vnet_server_create('mysql', self.resource_group, self.server)
@@ -259,7 +259,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
     
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_vnet_ha_server_create(self):
         with open(SINGLE_AVAILABILITY_FILE, "r") as f:
             result = f.readline()
@@ -277,7 +277,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("vnet_server_provision_check")
     def test_mysql_flexible_server_vnet_server_update_scale_up(self):
         self._test_flexible_server_vnet_server_update_scale_up('mysql', self.resource_group, self.server)
@@ -320,7 +320,7 @@ class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResour
 
     @AllowLargeResponse()
     @pytest.mark.order(1)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_proxy_resource_mgmt_prepare(self):
         try:
             self.cmd('az group create --location {} --name {}'.format(test_location, self.resource_group))
@@ -332,21 +332,21 @@ class MySqlFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResour
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("proxy_server_provision_check")
     def test_mysql_flexible_server_firewall_rule_mgmt(self):
         self._test_firewall_rule_mgmt('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("proxy_server_provision_check")
     def test_mysql_flexible_server_parameter_mgmt(self):
         self._test_parameter_mgmt('mysql', self.resource_group, self.server)
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("proxy_server_provision_check")
     def test_mysql_flexible_server_database_mgmt(self):
         self._test_database_mgmt('mysql', self.resource_group, self.server)
@@ -375,7 +375,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_high_availability_create(self):
         with open(SINGLE_AVAILABILITY_FILE, "r") as f:
             result = f.readline()
@@ -393,7 +393,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
     
     @AllowLargeResponse()
     @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_update_parameter(self):
@@ -401,7 +401,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_restart(self):
@@ -409,7 +409,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_stop(self):
@@ -417,7 +417,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(6)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("single_availability_zone_check")
     @pytest.mark.usefixtures("ha_server_provision_check")
     def test_mysql_flexible_server_high_availability_start(self):
@@ -425,7 +425,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
 
     @AllowLargeResponse()
     @pytest.mark.order(7)
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     @pytest.mark.usefixtures("ha_server_provision_check")
     @pytest.mark.usefixtures("single_availability_zone_check")
     def test_mysql_flexible_server_high_availability_failover(self):
@@ -527,13 +527,13 @@ class MySqlFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisionSc
     test_location = test_location
 
     @AllowLargeResponse()
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_vnet_provision_supplied_subnetid(self):
         # Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
         self._test_flexible_server_vnet_provision_existing_supplied_subnetid('mysql')
 
     @AllowLargeResponse()
-    @pytest.mark.execution_timeout(3600)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
         self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('mysql')
 
@@ -545,6 +545,6 @@ class MySqlFlexibleServerPublicAccessMgmtScenarioTest(FlexibleServerPublicAccess
     @AllowLargeResponse()
     @ResourceGroupPreparer(location=test_location)
     @live_only()
-    @pytest.mark.execution_timeout(5000)
+    @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_public_access_mgmt(self, resource_group):
         self._test_flexible_server_public_access_mgmt('mysql', resource_group)
