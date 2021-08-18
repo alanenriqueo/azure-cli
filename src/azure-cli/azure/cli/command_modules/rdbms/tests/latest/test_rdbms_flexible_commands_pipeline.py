@@ -826,8 +826,8 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         resource_group = 'clitest.vnetprovision-dns-no-private-' + resource_random_name + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
-        self.cmd('{} flexible-server create -g {} -n {} -l {} --private-dns-zone {} --yes'
-                 .format(database_engine, resource_group, server, location, dns_zone))
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --vnet {} --subnet {} --private-dns-zone {} --yes'
+                 .format(database_engine, resource_group, server, location, 'vnet-dns-test', 'subnet-dns-test', dns_zone))
         
         self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
                 checks=[JMESPathCheck('network.privateDnsZoneArmResourceId', '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/privateDnsZones/{}'.format(
