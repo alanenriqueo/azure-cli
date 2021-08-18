@@ -684,7 +684,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                      JMESPathCheck('name', replicas[0]),
                      JMESPathCheck('resourceGroup', resource_group),
                      JMESPathCheck('replicationRole', 'None'),
-                     JMESPathCheck('sourceServerResourceId', ''),
+                     JMESPathCheck('sourceServerResourceId', 'None'),
                      JMESPathCheck('replicaCapacity', result['replicaCapacity'])])
 
         # test show server with replication info, master becomes normal server
@@ -692,7 +692,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                  .format(database_engine, resource_group, master_server),
                  checks=[
                      JMESPathCheck('replicationRole', 'None'),
-                     JMESPathCheck('sourceServerResourceId', ''),
+                     JMESPathCheck('sourceServerResourceId', 'None'),
                      JMESPathCheck('replicaCapacity', result['replicaCapacity'])])
 
     def _test_flexible_server_replica_delete_source(self, database_engine, resource_group, master_server, replicas):
@@ -718,7 +718,7 @@ class FlexibleServerReplicationMgmtScenarioTest(RdbmsScenarioTest):  # pylint: d
                  .format(database_engine, resource_group, replicas[1]),
                  checks=[
                      JMESPathCheck('replicationRole', 'None'),
-                     JMESPathCheck('sourceServerResourceId', ''),
+                     JMESPathCheck('sourceServerResourceId', 'None'),
                      JMESPathCheck('replicaCapacity', result['replicaCapacity'])])
 
     def _test_flexible_server_replica_delete(self, database_engine, resource_group, replicas):

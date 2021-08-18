@@ -59,7 +59,7 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
         self.server3 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier2')
         self.restore_server = 'restore-' + self.server[:55]
         self.location = test_location
-        _, _, single_az = get_mysql_list_skus_info(self, test_location)
+        _, single_az, _ = get_mysql_list_skus_info(self, test_location)
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
             if single_az:
                 f.write("TRUE")
@@ -235,7 +235,7 @@ class MySqlFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmt
         self.restore_server = 'restore-' + self.server[:55]
         self.restore_server2 = 'restore-' + self.server2[:55]
         self.current_time = datetime.utcnow()
-        _, _, single_az = get_mysql_list_skus_info(self, test_location)
+        _, single_az, _ = get_mysql_list_skus_info(self, test_location)
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
             if single_az:
                 f.write("TRUE")
@@ -361,7 +361,7 @@ class MySqlFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityMgmt
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
         self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'ha')
         self.restore_server = 'restore-' + self.server[:55]
-        _, _, single_az = get_mysql_list_skus_info(self, test_location)
+        _, single_az, _ = get_mysql_list_skus_info(self, test_location)
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
             if single_az:
                 f.write("TRUE")
