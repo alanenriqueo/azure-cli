@@ -435,7 +435,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
         show_result = self.cmd('{} flexible-server show -g {} -n {}'
                                .format(database_engine, resource_group, server)).get_output_in_json()
 
-        self.assertEqual(show_result['delegatedSubnetArguments']['subnetArmResourceId'],
+        self.assertEqual(show_result['network']['delegatedSubnetResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
                              self.get_subscription_id(), resource_group, vnet, subnet))
 
@@ -449,7 +449,7 @@ class FlexibleServerVnetServerMgmtScenarioTest(RdbmsScenarioTest):
                                .format(database_engine, resource_group, server),
                                checks=[JMESPathCheck('highAvailability.mode', 'ZoneRedundant')]).get_output_in_json()
 
-        self.assertEqual(show_result['delegatedSubnetArguments']['subnetArmResourceId'],
+        self.assertEqual(show_result['network']['delegatedSubnetResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
                              self.get_subscription_id(), resource_group, vnet, subnet))
 
@@ -765,7 +765,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         # flexible-server show to validate delegation is added to both the created server
         show_result_1 = self.cmd('{} flexible-server show -g {} -n {}'
                                  .format(database_engine, resource_group, server)).get_output_in_json()
-        self.assertEqual(show_result_1['delegatedSubnetArguments']['subnetArmResourceId'], subnet_id)
+        self.assertEqual(show_result_1['network']['delegatedSubnetResourceId'], subnet_id)
 
         # delete server
         self.cmd('{} flexible-server delete -g {} -n {} --yes'.format(database_engine, resource_group, server),
@@ -808,7 +808,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
                                  .format(database_engine, resource_group_2, server)).get_output_in_json()
 
 
-        self.assertEqual(show_result_1['delegatedSubnetArguments']['subnetArmResourceId'],
+        self.assertEqual(show_result_1['network']['delegatedSubnetResourceId'],
                          '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/{}'.format(
                              self.get_subscription_id(), resource_group_1, vnet_name, subnet_name))
 
@@ -856,13 +856,13 @@ class FlexibleServerPublicAccessMgmtScenarioTest(ScenarioTest):
         # create server
         self.cmd('{} flexible-server create -g {} -n {} --public-access {} -l {}'
                  .format(database_engine, resource_group, servers[0], 'all', location),
-                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('sku.name', sku_name),
+                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('skuname', sku_name),
                          StringContainCheck('AllowAll_')])
 
         # Case 2 : Provision a server with public access allowing all azure services
         self.cmd('{} flexible-server create -g {} -n {} --public-access {} -l {}'
                  .format(database_engine, resource_group, servers[1], '0.0.0.0', location),
-                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('sku.name', sku_name),
+                 checks=[JMESPathCheck('resourceGroup', resource_group), JMESPathCheck('skuname', sku_name),
                          StringContainCheck('AllowAllAzureServicesAndResourcesWithinAzureIps_')])
 
         # delete all servers
