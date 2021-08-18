@@ -759,7 +759,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         subnet_id = self.cmd('network vnet subnet show -g {} -n {} --vnet-name {}'.format(resource_group, subnet_name, vnet_name)).get_output_in_json()['id']
 
         # create server - Delegation should be added.
-        self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
+        self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {} --yes'
                 .format(database_engine, resource_group, server, subnet_id, location))
 
         # flexible-server show to validate delegation is added to both the created server
@@ -799,7 +799,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
                     subnet_prefix_1)).get_output_in_json()
 
         # create server - Delegation should be added.
-        self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {}'
+        self.cmd('{} flexible-server create -g {} -n {} --subnet {} -l {} --yes'
                 .format(database_engine, resource_group_2, server, vnet_result['newVNet']['subnets'][0]['id'], location))
 
         
@@ -826,7 +826,7 @@ class FlexibleServerVnetProvisionScenarioTest(ScenarioTest):
         resource_group = 'clitest.vnetprovision-dns-no-private-' + resource_random_name + '-rg'
         self.cmd('group create -n {} -l {}'.format(resource_group, location))
 
-        self.cmd('{} flexible-server create -g {} -n {} -l {} --private-dns-zone {}'
+        self.cmd('{} flexible-server create -g {} -n {} -l {} --private-dns-zone {} --yes'
                  .format(database_engine, resource_group, server, location, dns_zone))
         
         self.cmd('{} flexible-server show -g {} -n {}'.format(database_engine, resource_group, server),
