@@ -384,10 +384,10 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
 
     def _test_flexible_server_high_availability_failover(self, database_engine, resource_group, server):
         if database_engine == 'postgres':
-            self.cmd('{} flexible-server restart -g {} -n {} --failover planned'
+            self.cmd('{} flexible-server restart -g {} -n {} --failover Planned'
                     .format(database_engine, resource_group, server), checks=NoneCheck())
         
-        self.cmd('{} flexible-server restart -g {} -n {} --failover forced'
+        self.cmd('{} flexible-server restart -g {} -n {} --failover Forced'
             .format(database_engine, resource_group, server), checks=NoneCheck())
 
 
