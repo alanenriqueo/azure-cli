@@ -295,12 +295,13 @@ def flexible_server_update_custom_func(cmd, client, instance,
     high_availability_param = postgresql_flexibleservers.models.HighAvailability()
     if high_availability:
         if high_availability.lower() == "enabled":
-            high_availability = "ZoneRedundant"
-            high_availability_param.mode = high_availability
+            high_availability_param.mode = "ZoneRedundant"
             if standby_availability_zone:
-                instance.high_availability.standby_availability_zone = standby_availability_zone
+                high_availability_param.standby_availability_zone = standby_availability_zone
         else:
             high_availability_param.mode = high_availability
+
+        params.high_availability = high_availability_param
 
     
 
