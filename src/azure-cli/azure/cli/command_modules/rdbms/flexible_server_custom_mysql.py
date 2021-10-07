@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 # pylint: disable=unused-argument, line-too-long
+from dateutil import parser
 from importlib import import_module
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.tools import resource_id, is_valid_resource_id, parse_resource_id  # pylint: disable=import-error
@@ -20,7 +21,8 @@ from ._flexible_server_util import resolve_poller, generate_missing_parameters, 
     generate_password, parse_maintenance_window
 from .flexible_server_custom_common import create_firewall_rule
 from .flexible_server_virtual_network import prepare_private_network, prepare_private_dns_zone, prepare_public_network
-from .validators import mysql_arguments_validator
+from .validators import mysql_arguments_validator, validate_mysql_replica, validate_server_name, validate_georestore_location, \
+    validate_georestore_network, validate_mysql_tier_update
 
 logger = get_logger(__name__)
 DEFAULT_DB_NAME = 'flexibleserverdb'
@@ -41,7 +43,7 @@ def flexible_server_create(cmd, client,
                            subnet=None, subnet_address_prefix=None, vnet=None, vnet_address_prefix=None,
                            private_dns_zone_arguments=None, public_access=None,
                            high_availability=None, zone=None, standby_availability_zone=None,
-                           iops=None, auto_grow=None, yes=False):
+                           iops=None, auto_grow=None, geo_redundant_backup=None, yes=False):
     # Generate missing parameters
     location, resource_group_name, server_name = generate_missing_parameters(cmd, location, resource_group_name,
                                                                              server_name, 'mysql')
@@ -50,7 +52,11 @@ def flexible_server_create(cmd, client,
         cf_availability=cf_mysql_check_resource_availability, cf_private_dns_zone_suffix=cf_mysql_flexible_private_dns_zone_suffix_operations, logging_name='MySQL', command_group='mysql', server_client=client,
         location=location)
 
+    # Process parameters
     server_name = server_name.lower()
+    if high_availability and high_availability.lower() == 'enabled':
+        logger.warning('\'Enabled\' value for high availability parameter will be deprecated. Please use \'ZoneRedundant\' or \'SameZone\' instead.')
+        high_availability = 'ZoneRedundant'
 
     mysql_arguments_validator(db_context,
                               server_name=server_name,
@@ -65,38 +71,25 @@ def flexible_server_create(cmd, client,
                               subnet=subnet,
                               public_access=public_access,
                               auto_grow=auto_grow,
-                              version=version)
-    _, _, iops_info = get_mysql_list_skus_info(db_context.cmd, location)
+                              version=version,
+                              geo_redundant_backup=geo_redundant_backup)
+    list_skus_info = get_mysql_list_skus_info(db_context.cmd, location)
+    iops_info = list_skus_info['iops_info']
 
     server_result = firewall_id = subnet_id = None
 
-    network = mysql_flexibleservers.models.Network()
-    if subnet is not None or vnet is not None:
-        subnet_id = prepare_private_network(cmd,
-                                            resource_group_name,
-                                            server_name,
-                                            vnet=vnet,
-                                            subnet=subnet,
-                                            location=location,
-                                            delegation_service_name=DELEGATION_SERVICE_NAME,
-                                            vnet_address_pref=vnet_address_prefix,
-                                            subnet_address_pref=subnet_address_prefix,
-                                            yes=yes)
-        private_dns_zone_id = prepare_private_dns_zone(db_context,
-                                                       'MySQL',
-                                                       resource_group_name,
-                                                       server_name,
-                                                       private_dns_zone=private_dns_zone_arguments,
-                                                       subnet_id=subnet_id,
-                                                       location=location,
-                                                       yes=yes)
-        network.delegated_subnet_resource_id = subnet_id
-        network.private_dns_zone_resource_id = private_dns_zone_id
-    else:
-        network.public_network_access = ' Enabled'
-        start_ip, end_ip = prepare_public_network(public_access, yes=yes)
-        if start_ip != -1:
-            public_access = 'Enabled'
+    network, start_ip, end_ip = flexible_server_provision_network_resource(cmd=cmd,
+                                                                           resource_group_name=resource_group_name,
+                                                                           server_name=server_name,
+                                                                           location=location,
+                                                                           db_context=db_context,
+                                                                           private_dns_zone_arguments=private_dns_zone_arguments,
+                                                                           public_access=public_access,
+                                                                           vnet=vnet,
+                                                                           subnet=subnet,
+                                                                           vnet_address_prefix=vnet_address_prefix,
+                                                                           subnet_address_prefix=subnet_address_prefix,
+                                                                           yes=yes)
 
     # determine IOPS
     iops = _determine_iops(storage_gb=storage_gb,
@@ -109,12 +102,11 @@ def flexible_server_create(cmd, client,
                                                    iops=iops,
                                                    auto_grow=auto_grow)
 
-    backup = mysql_flexibleservers.models.Backup(backup_retention_days=backup_retention)
+    backup = mysql_flexibleservers.models.Backup(backup_retention_days=backup_retention,
+                                                 geo_redundant_backup=geo_redundant_backup)
 
     sku = mysql_flexibleservers.models.Sku(name=sku_name, tier=tier)
 
-    if high_availability.lower() == "enabled":
-        high_availability = "ZoneRedundant"
     high_availability = mysql_flexibleservers.models.HighAvailability(mode=high_availability,
                                                                       standby_availability_zone=standby_availability_zone)
 
@@ -136,7 +128,7 @@ def flexible_server_create(cmd, client,
                                    availability_zone=zone)
 
     # Adding firewall rule
-    if public_access is not None and str(public_access).lower() != 'none':
+    if start_ip != -1 and end_ip != -1:
         firewall_id = create_firewall_rule(db_context, cmd, resource_group_name, server_name, start_ip, end_ip)
 
     # Create mysql database if it does not exist
@@ -154,6 +146,7 @@ def flexible_server_create(cmd, client,
     logger.warning('Make a note of your password. If you forget, you would have to reset your password with'
                    '\'az mysql flexible-server update -n %s -g %s -p <new-password>\'.',
                    server_name, resource_group_name)
+    logger.warning('Try using az \'mysql flexible-server connect\' command to test out connection.')
 
     _update_local_contexts(cmd, server_name, resource_group_name, location, user)
 
@@ -167,7 +160,75 @@ def flexible_server_restore(cmd, client,
                             resource_group_name, server_name,
                             source_server, restore_point_in_time=None, zone=None, no_wait=False,
                             subnet=None, subnet_address_prefix=None, vnet=None, vnet_address_prefix=None,
-                            private_dns_zone_arguments=None, yes=False):
+                            private_dns_zone_arguments=None, public_access=None, yes=False):
+    provider = 'Microsoft.DBforMySQL'
+    server_name = server_name.lower()
+
+    if not is_valid_resource_id(source_server):
+        if len(source_server.split('/')) == 1:
+            source_server_id = resource_id(
+                subscription=get_subscription_id(cmd.cli_ctx),
+                resource_group=resource_group_name,
+                namespace=provider,
+                type='flexibleServers',
+                name=source_server)
+        else:
+            raise ValueError('The provided source-server {} is invalid.'.format(source_server))
+    else:
+        source_server_id = source_server
+
+    try:
+        id_parts = parse_resource_id(source_server_id)
+        source_server_object = client.get(id_parts['resource_group'], id_parts['name'])
+        if not zone:
+            zone = source_server_object.availability_zone
+        location = ''.join(source_server_object.location.lower().split())
+
+        db_context = DbContext(
+            cmd=cmd, cf_availability=cf_mysql_check_resource_availability, logging_name='MySQL', command_group='mysql', server_client=client,
+            location=location)
+        validate_server_name(db_context, server_name, provider + '/flexibleServers')
+
+        parameters = mysql_flexibleservers.models.Server(
+            location=location,
+            restore_point_in_time=parser.parse(restore_point_in_time),
+            source_server_resource_id=source_server_id,  # this should be the source server name, not id
+            create_mode="PointInTimeRestore",
+            availability_zone=zone
+        )
+
+        if any((public_access, vnet, subnet)):
+            db_context = DbContext(
+                cmd=cmd, cf_firewall=cf_mysql_flexible_firewall_rules, cf_db=cf_mysql_flexible_db,
+                cf_availability=cf_mysql_check_resource_availability, cf_private_dns_zone_suffix=cf_mysql_flexible_private_dns_zone_suffix_operations, logging_name='MySQL', command_group='mysql', server_client=client,
+                location=location)
+
+            parameters.network, _, _ = flexible_server_provision_network_resource(cmd=cmd,
+                                                                                  resource_group_name=resource_group_name,
+                                                                                  server_name=server_name,
+                                                                                  location=location,
+                                                                                  db_context=db_context,
+                                                                                  private_dns_zone_arguments=private_dns_zone_arguments,
+                                                                                  public_access=public_access,
+                                                                                  vnet=vnet,
+                                                                                  subnet=subnet,
+                                                                                  vnet_address_prefix=vnet_address_prefix,
+                                                                                  subnet_address_prefix=subnet_address_prefix,
+                                                                                  yes=yes)
+        else:
+            parameters.network = source_server_object.network
+
+    except Exception as e:
+        raise ResourceNotFoundError(e)
+
+    return sdk_no_wait(no_wait, client.begin_create, resource_group_name, server_name, parameters)
+
+
+def flexible_server_georestore(cmd, client,
+                               resource_group_name, server_name,
+                               source_server, location, zone=None, no_wait=False,
+                               subnet=None, subnet_address_prefix=None, vnet=None, vnet_address_prefix=None,
+                               private_dns_zone_arguments=None, public_access=None, yes=False):
     provider = 'Microsoft.DBforMySQL'
     server_name = server_name.lower()
 
@@ -188,46 +249,38 @@ def flexible_server_restore(cmd, client,
         id_parts = parse_resource_id(source_server_id)
         source_server_object = client.get(id_parts['resource_group'], id_parts['name'])
 
-        if not zone:
-            zone = source_server_object.availability_zone
+        db_context = DbContext(
+            cmd=cmd, cf_firewall=cf_mysql_flexible_firewall_rules, cf_db=cf_mysql_flexible_db,
+            cf_availability=cf_mysql_check_resource_availability, cf_private_dns_zone_suffix=cf_mysql_flexible_private_dns_zone_suffix_operations, logging_name='MySQL', command_group='mysql', server_client=client,
+            location=source_server_object.location)
+
+        validate_server_name(db_context, server_name, provider + '/flexibleServers')
+        validate_georestore_location(db_context, location)
+        validate_georestore_network(source_server_object, public_access, vnet, subnet)
 
         parameters = mysql_flexibleservers.models.Server(
-            location=source_server_object.location,
-            restore_point_in_time=restore_point_in_time,
+            location=location,
             source_server_resource_id=source_server_id,  # this should be the source server name, not id
-            create_mode="PointInTimeRestore",
+            create_mode="GeoRestore",
             availability_zone=zone
         )
 
-        if source_server_object.network.public_network_access == 'Disabled':
-            db_context = DbContext(
-                cmd=cmd, cf_firewall=cf_mysql_flexible_firewall_rules, cf_db=cf_mysql_flexible_db,
-                cf_availability=cf_mysql_check_resource_availability, cf_private_dns_zone_suffix=cf_mysql_flexible_private_dns_zone_suffix_operations, logging_name='MySQL', command_group='mysql', server_client=client,
-                location=source_server_object.location)
+        db_context.location = location
+        if source_server_object.network.public_network_access == 'Enabled' and not any((public_access, vnet, subnet)):
+            public_access = 'Enabled'
 
-            if subnet is not None or vnet is not None:
-                network = mysql_flexibleservers.models.Network()
-                subnet_id = prepare_private_network(cmd,
-                                                    resource_group_name,
-                                                    server_name,
-                                                    vnet=vnet,
-                                                    subnet=subnet,
-                                                    location=source_server_object.location,
-                                                    delegation_service_name=DELEGATION_SERVICE_NAME,
-                                                    vnet_address_pref=vnet_address_prefix,
-                                                    subnet_address_pref=subnet_address_prefix,
-                                                    yes=yes)
-                private_dns_zone_id = prepare_private_dns_zone(db_context,
-                                                               'MySQL',
-                                                               resource_group_name,
-                                                               server_name,
-                                                               private_dns_zone=private_dns_zone_arguments,
-                                                               subnet_id=subnet_id,
-                                                               location=source_server_object.location,
-                                                               yes=yes)
-                network.delegated_subnet_resource_id = subnet_id
-                network.private_dns_zone_resource_id = private_dns_zone_id
-                parameters.network = network
+        parameters.network, _, _ = flexible_server_provision_network_resource(cmd=cmd,
+                                                                              resource_group_name=resource_group_name,
+                                                                              server_name=server_name,
+                                                                              location=location,
+                                                                              db_context=db_context,
+                                                                              private_dns_zone_arguments=private_dns_zone_arguments,
+                                                                              public_access=public_access,
+                                                                              vnet=vnet,
+                                                                              subnet=subnet,
+                                                                              vnet_address_prefix=vnet_address_prefix,
+                                                                              subnet_address_prefix=subnet_address_prefix,
+                                                                              yes=yes)
 
     except Exception as e:
         raise ResourceNotFoundError(e)
@@ -256,6 +309,10 @@ def flexible_server_update_custom_func(cmd, client, instance,
         cf_availability=cf_mysql_check_resource_availability, logging_name='MySQL', command_group='mysql', server_client=client,
         location=instance.location)
 
+    if high_availability and high_availability.lower() == 'enabled':
+        logger.warning('\'Enabled\' value for high availability parameter will be deprecated. Please use \'ZoneRedundant\' or \'SameZone\' instead.')
+        high_availability = 'ZoneRedundant'
+
     mysql_arguments_validator(db_context,
                               location=location,
                               tier=tier,
@@ -268,7 +325,9 @@ def flexible_server_update_custom_func(cmd, client, instance,
                               auto_grow=auto_grow,
                               replication_role=replication_role,
                               instance=instance)
-    _, _, iops_info = get_mysql_list_skus_info(db_context.cmd, location)
+
+    list_skus_info = get_mysql_list_skus_info(db_context.cmd, location)
+    iops_info = list_skus_info['iops_info']
 
     server_module_path = instance.__module__
     module = import_module(server_module_path)  # replacement not needed for update in flex servers
@@ -278,6 +337,7 @@ def flexible_server_update_custom_func(cmd, client, instance,
         instance.sku.name = sku_name
 
     if tier:
+        validate_mysql_tier_update(instance, tier)
         instance.sku.tier = tier
 
     if backup_retention:
@@ -303,8 +363,7 @@ def flexible_server_update_custom_func(cmd, client, instance,
         return params
 
     if high_availability:
-        if high_availability.lower() == "enabled":
-            high_availability = "ZoneRedundant"
+        if high_availability.lower() != "disabled":
             instance.high_availability.mode = high_availability
             if standby_availability_zone:
                 instance.high_availability.standby_availability_zone = standby_availability_zone
@@ -330,7 +389,6 @@ def flexible_server_update_custom_func(cmd, client, instance,
                              backup=instance.backup,
                              administrator_login_password=administrator_login_password,
                              high_availability=instance.high_availability,
-                             maintenance_window=instance.maintenance_window,
                              tags=tags)
 
     return params
@@ -373,6 +431,42 @@ def flexible_server_restart(cmd, client, resource_group_name, server_name, fail_
         client.begin_restart(resource_group_name, server_name, parameters), cmd.cli_ctx, 'MySQL Server Restart')
 
 
+def flexible_server_provision_network_resource(cmd, resource_group_name, server_name,
+                                               location, db_context, private_dns_zone_arguments=None, public_access=None,
+                                               vnet=None, subnet=None, vnet_address_prefix=None, subnet_address_prefix=None, yes=False):
+    start_ip = -1
+    end_ip = -1
+    network = mysql_flexibleservers.models.Network()
+
+    if subnet is not None or vnet is not None:
+        subnet_id = prepare_private_network(cmd,
+                                            resource_group_name,
+                                            server_name,
+                                            vnet=vnet,
+                                            subnet=subnet,
+                                            location=location,
+                                            delegation_service_name=DELEGATION_SERVICE_NAME,
+                                            vnet_address_pref=vnet_address_prefix,
+                                            subnet_address_pref=subnet_address_prefix,
+                                            yes=yes)
+        private_dns_zone_id = prepare_private_dns_zone(db_context,
+                                                       'MySQL',
+                                                       resource_group_name,
+                                                       server_name,
+                                                       private_dns_zone=private_dns_zone_arguments,
+                                                       subnet_id=subnet_id,
+                                                       location=location,
+                                                       yes=yes)
+        network.delegated_subnet_resource_id = subnet_id
+        network.private_dns_zone_resource_id = private_dns_zone_id
+    elif subnet is None and vnet is None and private_dns_zone_arguments is not None:
+        raise RequiredArgumentMissingError("Private DNS zone can only be used with private access setting. Use vnet or/and subnet parameters.")
+    else:
+        start_ip, end_ip = prepare_public_network(public_access, yes=yes)
+
+    return network, start_ip, end_ip
+
+
 # Parameter update command
 def flexible_parameter_update(client, server_name, configuration_name, resource_group_name, source=None, value=None):
     if source is None and value is None:
@@ -397,7 +491,7 @@ def flexible_parameter_update(client, server_name, configuration_name, resource_
 
 # Replica commands
 # Custom functions for server replica, will add MySQL part after backend ready in future
-def flexible_replica_create(cmd, client, resource_group_name, source_server, replica_name, no_wait=False, location=None, sku_name=None, tier=None, **kwargs):
+def flexible_replica_create(cmd, client, resource_group_name, source_server, replica_name, zone=None, no_wait=False, location=None, sku_name=None, tier=None, **kwargs):
     provider = 'Microsoft.DBforMySQL'
     replica_name = replica_name.lower()
 
@@ -417,18 +511,23 @@ def flexible_replica_create(cmd, client, resource_group_name, source_server, rep
     source_server_id_parts = parse_resource_id(source_server_id)
     try:
         source_server_object = client.get(source_server_id_parts['resource_group'], source_server_id_parts['name'])
+        validate_mysql_replica(cmd, source_server_object)
     except Exception as e:
         raise ResourceNotFoundError(e)
 
     location = source_server_object.location
     sku_name = source_server_object.sku.name
     tier = source_server_object.sku.tier
+    if not zone:
+        zone = source_server_object.availability_zone
 
     parameters = mysql_flexibleservers.models.Server(
         sku=mysql_flexibleservers.models.Sku(name=sku_name, tier=tier),
         source_server_resource_id=source_server_id,
         location=location,
+        availability_zone=zone,
         create_mode="Replica")
+
     return sdk_no_wait(no_wait, client.begin_create, resource_group_name, replica_name, parameters)
 
 
@@ -483,9 +582,6 @@ def _create_server(db_context, cmd, resource_group_name, server_name, tags, loca
         high_availability=high_availability,
         availability_zone=availability_zone,
         create_mode="Create")
-
-    # if assign_identity:
-    #     parameters.identity = mysql_flexibleservers.models.Identity()
 
     return resolve_poller(
         server_client.begin_create(resource_group_name, server_name, parameters), cmd.cli_ctx,

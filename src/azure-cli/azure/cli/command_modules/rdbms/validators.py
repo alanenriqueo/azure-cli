@@ -123,18 +123,24 @@ def validate_private_endpoint_connection_id(cmd, namespace):
 def mysql_arguments_validator(db_context, location, tier, sku_name, storage_gb, backup_retention=None,
                               server_name=None, zone=None, standby_availability_zone=None, high_availability=None,
                               subnet=None, public_access=None, version=None, auto_grow=None, replication_role=None,
-                              instance=None):
+                              geo_redundant_backup=None, instance=None):
     validate_server_name(db_context, server_name, 'Microsoft.DBforMySQL/flexibleServers')
-    sku_info, single_az, _ = get_mysql_list_skus_info(db_context.cmd, location)
-    _mysql_high_availability_validator(high_availability, standby_availability_zone, zone, tier,
-                                       single_az, auto_grow, instance)
+
+    list_skus_info = get_mysql_list_skus_info(db_context.cmd, location)
+    sku_info = list_skus_info['sku_info']
+    single_az = list_skus_info['single_az']
+    geo_paired_regions = list_skus_info['geo_paired_regions']
+
     _network_arg_validator(subnet, public_access)
     _mysql_tier_validator(tier, sku_info)  # need to be validated first
+    _mysql_georedundant_backup_validator(geo_redundant_backup, geo_paired_regions)
     if tier is None and instance is not None:
         tier = instance.sku.tier
     _mysql_retention_validator(backup_retention, sku_info, tier)
     _mysql_storage_validator(storage_gb, sku_info, tier, instance)
     _mysql_sku_name_validator(sku_name, sku_info, tier, instance)
+    _mysql_high_availability_validator(high_availability, standby_availability_zone, zone, tier,
+                                       single_az, auto_grow, instance)
     _mysql_version_validator(version, sku_info, tier, instance)
     _mysql_auto_grow_validator(auto_grow, replication_role, high_availability, instance)
 
@@ -142,9 +148,9 @@ def mysql_arguments_validator(db_context, location, tier, sku_name, storage_gb, 
 def _mysql_retention_validator(backup_retention, sku_info, tier):
     if backup_retention is not None:
         backup_retention_range = get_mysql_backup_retention(sku_info, tier)
-        if not backup_retention_range[0] <= int(backup_retention) <= backup_retention_range[1]:
+        if not 1 <= int(backup_retention) <= backup_retention_range[1]:
             raise CLIError('incorrect usage: --backup-retention. Range is {} to {} days.'
-                           .format(backup_retention_range[0], backup_retention_range[1]))
+                           .format(1, backup_retention_range[1]))
 
 
 def _mysql_storage_validator(storage_gb, sku_info, tier, instance):
@@ -161,6 +167,11 @@ def _mysql_storage_validator(storage_gb, sku_info, tier, instance):
                            .format(max(min_mysql_storage, storage_sizes[0]), storage_sizes[1]))
 
 
+def _mysql_georedundant_backup_validator(geo_redundant_backup, geo_paired_regions):
+    if geo_redundant_backup and geo_redundant_backup.lower() == 'enabled' and len(geo_paired_regions) == 0:
+        raise ArgumentUsageError("The region of the server does not support geo-restore feature.")
+
+
 def _mysql_tier_validator(tier, sku_info):
     if tier:
         tiers = get_mysql_tiers(sku_info)
@@ -174,9 +185,10 @@ def _mysql_sku_name_validator(sku_name, sku_info, tier, instance):
     if sku_name:
         skus = get_mysql_skus(sku_info, tier)
         if sku_name not in skus:
-            error_msg = 'Incorrect value for --sku-name. ' +\
-                        'The SKU name does not match {} tier. Specify --tier if you did not. '.format(tier)
-            raise CLIError(error_msg + 'Allowed values : {}'.format(skus))
+            raise CLIError('Incorrect value for --sku-name. The SKU name does not match tier selection. '
+                           'Default value for --tier is Burstable. '
+                           'For Memory Optimized and General Purpose you need to specify --tier value explicitly. '
+                           'Allowed values for {} tier: {}'.format(tier, skus))
 
 
 def _mysql_version_validator(version, sku_info, tier, instance):
@@ -207,33 +219,38 @@ def _mysql_high_availability_validator(high_availability, standby_availability_z
     if instance:
         tier = instance.sku.tier if tier is None else tier
         auto_grow = instance.storage.auto_grow if auto_grow is None else auto_grow
-    if high_availability is not None and high_availability.lower() == 'enabled':
+        zone = instance.availability_zone if zone is None else zone
+    if high_availability is not None and high_availability.lower() != 'disabled':
         if tier == 'Burstable':
             raise ArgumentUsageError("High availability is not supported for Burstable tier")
-        if single_az:
-            raise ArgumentUsageError("This region is single availability zone."
-                                     "High availability is not supported in a single availability zone region.")
+        if single_az and high_availability.lower() == 'zoneredundant':
+            raise ArgumentUsageError("This region is single availability zone. "
+                                     "Zone redundant high availability is not supported "
+                                     "in a single availability zone region.")
         if auto_grow.lower == 'Disabled':
-            raise ArgumentUsageError("Enabling High Availability requires Auto grow to be turned ON.")
+            raise ArgumentUsageError("Enabling High availability requires auto-grow to be turned ON.")
     if standby_availability_zone:
-        if not high_availability:
-            raise ArgumentUsageError("You need to enable high availability to set standby availability zone.")
+        if not high_availability or high_availability.lower() != 'zoneredundant':
+            raise ArgumentUsageError("You need to enable zone redundant high availability to set standby availability zone.")
         if zone == standby_availability_zone:
-            raise ArgumentUsageError("The zone of the server cannot be same as standby zone.")
+            raise ArgumentUsageError("Your server is in availability zone {}. "
+                                     "The zone of the server cannot be same as the standby zone.".format(zone))
 
 
 def pg_arguments_validator(db_context, location, tier, sku_name, storage_gb, server_name=None, zone=None,
                            standby_availability_zone=None, high_availability=None, subnet=None, public_access=None,
                            version=None, instance=None):
     validate_server_name(db_context, server_name, 'Microsoft.DBforPostgreSQL/flexibleServers')
-    sku_info, single_az = get_postgres_list_skus_info(db_context.cmd, location)
-    _pg_high_availability_validator(high_availability, standby_availability_zone, zone, tier, single_az, instance)
+    list_skus_info = get_postgres_list_skus_info(db_context.cmd, location)
+    sku_info = list_skus_info['sku_info']
+    single_az = list_skus_info['single_az']
     _network_arg_validator(subnet, public_access)
     _pg_tier_validator(tier, sku_info)  # need to be validated first
     if tier is None and instance is not None:
         tier = instance.sku.tier
     _pg_storage_validator(storage_gb, sku_info, tier, instance)
     _pg_sku_name_validator(sku_name, sku_info, tier, instance)
+    _pg_high_availability_validator(high_availability, standby_availability_zone, zone, tier, single_az, instance)
     _pg_version_validator(version, sku_info, tier, instance)
 
 
@@ -264,9 +281,9 @@ def _pg_sku_name_validator(sku_name, sku_info, tier, instance):
     if sku_name:
         skus = get_postgres_skus(sku_info, tier)
         if sku_name not in skus:
-            error_msg = 'Incorrect value for --sku-name. ' +\
-                        'The SKU name does not match {} tier. Specify --tier if you did not. '.format(tier)
-            raise CLIError(error_msg + 'Allowed values : {}'.format(skus))
+            raise CLIError('Incorrect value for --sku-name. The SKU name does not match {} tier. '
+                           'Specify --tier if you did not. Or CLI will set GeneralPurpose as the default tier. '
+                           'Allowed values : {}'.format(tier, skus))
 
 
 def _pg_version_validator(version, sku_info, tier, instance):
@@ -285,7 +302,7 @@ def _pg_high_availability_validator(high_availability, standby_availability_zone
         if tier == 'Burstable':
             raise ArgumentUsageError("High availability is not supported for Burstable tier")
         if single_az:
-            raise ArgumentUsageError("This region is single availability zone."
+            raise ArgumentUsageError("This region is single availability zone. "
                                      "High availability is not supported in a single availability zone region.")
 
     if standby_availability_zone:
@@ -302,7 +319,7 @@ def _network_arg_validator(subnet, public_access):
 
 
 def maintenance_window_validator(ns):
-    options = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Disabled"]
+    options = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Disabled", "disabled"]
     if ns.maintenance_window:
         parsed_input = ns.maintenance_window.split(':')
         if not parsed_input or len(parsed_input) > 3:
@@ -311,7 +328,7 @@ def maintenance_window_validator(ns):
         if len(parsed_input) >= 1 and parsed_input[0] not in options:
             raise CLIError('Incorrect value for --maintenance-window. '
                            'The first value means the scheduled day in a week or '
-                           'can be "Disabled" to reset maintenance window.'
+                           'can be "Disabled" to reset maintenance window. '
                            'Allowed values: {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"}')
         if len(parsed_input) >= 2 and \
            (not parsed_input[1].isdigit() or int(parsed_input[1]) < 0 or int(parsed_input[1]) > 23):
@@ -383,9 +400,13 @@ def validate_server_name(db_context, server_name, type_):
         raise ValidationError("Server name must be at least 3 characters and at most 63 characters.")
 
     if db_context.command_group == 'mysql':
-        # result = client.execute(db_context.location, name_availability_request={'name': server_name, 'type': type_})
-        return
-    result = client.execute(name_availability_request={'name': server_name, 'type': type_})
+        result = client.execute(db_context.location,
+                                name_availability_request={
+                                    'name': server_name,
+                                    'location_name': db_context.location,
+                                    'type': type_})
+    else:
+        result = client.execute(name_availability_request={'name': server_name, 'type': type_})
 
     if not result.name_available:
         raise ValidationError(result.message)
@@ -416,3 +437,39 @@ def validate_mysql_ha_enabled(server):
 def validate_vnet_location(vnet, location):
     if vnet.location != location:
         raise ValidationError("The location of Vnet should be same as the location of the server")
+
+
+def validate_mysql_replica(cmd, server):
+    # Tier validation
+    if server.sku.tier == 'Burstable':
+        raise ValidationError("Read replica is not supported for the Burstable pricing tier. "
+                              "Scale up the source server to General Purpose or Memory Optimized. ")
+
+    # single az validation
+    list_skus_info = get_mysql_list_skus_info(cmd, server.location)
+    single_az = list_skus_info['single_az']
+    if single_az:
+        raise ValidationError("Replica can only be created for multi-availability zone regions. "
+                              "The location of the source server is in a single availability zone region.")
+
+
+def validate_mysql_tier_update(instance, tier):
+    if instance.sku.tier in ['GeneralPurpose', 'MemoryOptimized'] and tier == 'Burstable':
+        if instance.replication_role == 'Source':
+            raise ValidationError("Read replica is not supported for Burstable Tier")
+        if instance.high_availability.mode != 'Disabled':
+            raise ValidationError("High availability is not supported for Burstable Tier")
+
+
+def validate_georestore_location(db_context, location):
+    list_skus_info = get_mysql_list_skus_info(db_context.cmd, db_context.location)
+    geo_paired_regions = list_skus_info['geo_paired_regions']
+
+    if location not in geo_paired_regions:
+        raise ValidationError("The region is not paired with the region of the source server. ")
+
+
+def validate_georestore_network(source_server_object, public_access, vnet, subnet):
+    if source_server_object.network.public_network_access == 'Disabled' and not any((public_access, vnet, subnet)):
+        raise ValidationError("Please specify network parameters if you are geo-restoring a private access server. "
+                              "Run 'az mysql flexible-server goe-restore --help' command to see examples")

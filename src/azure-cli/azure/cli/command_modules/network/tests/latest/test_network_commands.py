@@ -393,6 +393,41 @@ class NetworkPublicIpWithSku(ScenarioTest):
             self.cmd('network public-ip create -g {rg} -l {location} -n {ip4} --tier {global_tier}')
 
 
+class NetworkCustomIpPrefix(ScenarioTest):
+
+    @ResourceGroupPreparer(name_prefix='cli_test_network_custom_ip_prefix', location='eastus2')
+    def test_network_custom_ip_prefix(self, resource_group):
+
+        self.kwargs.update({
+            'rg': resource_group,
+            'prefix': 'prefix1'
+        })
+
+        # Test custom prefix CRUD
+        self.cmd('network custom-ip prefix create -g {rg} -n {prefix} --cidr 40.40.40.0/24')
+        self.cmd('network custom-ip prefix update -g {rg} -n {prefix} --tags foo=doo')
+        # self.cmd('network custom-ip prefix update -g {rg} -n {prefix} --state Commissioning')
+        self.cmd('network custom-ip prefix list -g {rg}',
+                 checks=self.check('length(@)', 1))
+        # Delete operation isn't ready.
+        # self.cmd('network custom-ip prefix delete -g {rg} -n {prefix}')
+        # self.cmd('network custom-ip prefix list -g {rg}',
+        #          checks=self.is_empty())
+
+    @record_only()
+    def test_network_custom_ip_prefix_update_state(self):
+        self.kwargs.update({
+            'rg': 'cli_test_custom_ip_prefix',
+            'prefix': 'prefix1'
+        })
+
+        self.cmd('network custom-ip prefix show -g {rg} -n {prefix}',
+                 checks=self.check('commissionedState', 'Provisioned'))
+
+        self.cmd('network custom-ip prefix update -g {rg} -n {prefix} --state Commissioning',
+                 checks=self.check('commissionedState', 'Commissioning'))
+
+
 class NetworkPublicIpPrefix(ScenarioTest):
 
     @ResourceGroupPreparer(name_prefix='cli_test_network_public_ip_prefix', location='eastus2')
@@ -451,6 +486,23 @@ class NetworkPublicIpPrefix(ScenarioTest):
             self.check('prefixLength', 30),
             self.check('length(zones)', 3)
         ])
+
+    @ResourceGroupPreparer(name_prefix='cli_test_network_public_ip_prefix_with_ip_address', location='eastus2')
+    def test_network_public_ip_prefix_with_ip_address(self, resource_group):
+        self.kwargs.update({
+            'prefix_name_ipv4': 'public_ip_prefix_0',
+            'pip': 'pip1'
+        })
+
+        ip_prefix = self.cmd('network public-ip prefix create -g {rg} -n {prefix_name_ipv4} --length 28', checks=[
+            self.check('publicIpAddressVersion', 'IPv4')
+        ]).get_output_in_json()
+
+        ip_address = '.'.join(ip_prefix['ipPrefix'].split('.')[:3]) + '10'
+
+        # Create public ip with ip address
+        self.cmd('network public-ip create -g {rg} -n {pip} --public-ip-prefix {prefix_name_ipv4} --sku Standard --ip-address ' + ip_address,
+                 checks=self.check("publicIp.publicIpPrefix.id.contains(@, '{prefix_name_ipv4}')", True))
 
 
 class NetworkMultiIdsShowScenarioTest(ScenarioTest):
@@ -703,6 +755,14 @@ class NetworkAppGatewayTrustedClientCertScenarioTest(ScenarioTest):
         self.cmd('network application-gateway client-cert list -g {rg} --gateway-name {gw}',
                  checks=[self.check('length(@)', 2)])
 
+        self.cmd('network application-gateway client-cert update -g {rg} --gateway-name {gw} '
+                 '--name {cname1} --data "{cert}"')
+
+        cert = self.cmd('network application-gateway client-cert show -g {rg} --gateway-name {gw} --name {cname}').get_output_in_json()
+
+        self.cmd('network application-gateway client-cert show -g {rg} --gateway-name {gw} --name {cname1}',
+                 checks=[self.check('data', cert['data'])])
+
         self.cmd('network application-gateway client-cert remove -g {rg} --gateway-name {gw} --name {cname1}',
                  checks=[self.check('length(trustedClientCertificates)', 1)])
 
@@ -730,6 +790,13 @@ class NetworkAppGatewaySslProfileScenarioTest(ScenarioTest):
                  '--client-auth-configuration True --min-protocol-version TLSv1_0 '
                  '--cipher-suites TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 --policy-type Custom',
                  checks=[self.check('length(sslProfiles)', 2)])
+
+        self.cmd('network application-gateway ssl-profile update -g {rg} --gateway-name {gw} --name {name1} '
+                 '--client-auth-configuration False',
+                 checks=[self.check('sslProfiles[1].clientAuthConfiguration.verifyClientCertIssuerDn', False)])
+
+        self.cmd('network application-gateway ssl-profile show -g {rg} --gateway-name {gw} --name {name1} ',
+                 checks=[self.check('clientAuthConfiguration.verifyClientCertIssuerDn', False)])
 
         self.cmd('network application-gateway ssl-profile list -g {rg} --gateway-name {gw}',
                  checks=[self.check('length(@)', 2)])
@@ -4783,6 +4850,7 @@ class NetworkServiceAliasesScenarioTest(ScenarioTest):
 
 class NetworkBastionHostScenarioTest(ScenarioTest):
 
+    @AllowLargeResponse()
     @ResourceGroupPreparer(name_prefix='test_network_bastion_host')
     def test_network_batsion_host_create(self, resource_group):
         self.kwargs.update({
@@ -4793,15 +4861,17 @@ class NetworkBastionHostScenarioTest(ScenarioTest):
             'subnet2': 'vmSubnet',
             'ip1': 'ip1',
             'bastion': 'clibastion'
+
         })
         self.cmd('network vnet create -g {rg} -n {vnet} --subnet-name {subnet1}')
         self.cmd('network vnet subnet create -g {rg} -n {subnet2} --vnet-name {vnet} --address-prefixes 10.0.2.0/24')
         self.cmd('network public-ip create -g {rg} -n {ip1} --sku Standard')
         self.cmd('vm create -g {rg} -n {vm} --image UbuntuLTS --vnet-name {vnet} --subnet {subnet2} '
                  '--admin-password TestPassword11!! --admin-username testadmin --authentication-type password --nsg-rule None')
-        self.cmd('network bastion create -g {rg} -n {bastion} --vnet-name {vnet} --public-ip-address {ip1}', checks=[
+        self.cmd('network bastion create -g {rg} -n {bastion} --vnet-name {vnet} --public-ip-address {ip1} --tags a=b', checks=[
             self.check('type', 'Microsoft.Network/bastionHosts'),
-            self.check('name', '{bastion}')
+            self.check('name', '{bastion}'),
+            self.check('tags.a', 'b')
         ])
         self.cmd('network bastion list')
         self.cmd('network bastion list -g {rg}', checks=[
