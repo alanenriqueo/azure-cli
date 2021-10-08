@@ -484,7 +484,7 @@ class MySqlFlexibleServerReplicationMgmtScenarioTest(FlexibleServerReplicationMg
     def test_mysql_flexible_server_replica_prepare(self):
         try:
             self.cmd('az group create --location {} --name {}'.format(test_location, self.resource_group))
-            self.cmd('{} flexible-server create -g {} --name {} -l {} --storage-size {} --public-access none'
+            self.cmd('{} flexible-server create -g {} --name {} -l {} --storage-size {} --public-access none --tier GeneralPurpose --sku-name Standard_D2s_v3'
                     .format('mysql', self.resource_group, self.master_server, test_location, 256))
             write_succeeded_result(REPLICA_SERVER_FILE)
         except:
