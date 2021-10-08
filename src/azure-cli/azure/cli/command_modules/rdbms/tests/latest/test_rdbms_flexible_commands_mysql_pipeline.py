@@ -186,7 +186,7 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
     @AllowLargeResponse()
     @pytest.mark.order(18)
     @pytest.mark.execution_timeout(7200)
-    def test_mysql_flexible_server_restore(self):
+    def test_mysql_flexible_server_georestore(self):
         self._test_flexible_server_georestore('mysql', SOURCE_RG, SOURCE_SERVER_GEORESTORE_PREFIX + self.location, self.georestore_server)
 
 

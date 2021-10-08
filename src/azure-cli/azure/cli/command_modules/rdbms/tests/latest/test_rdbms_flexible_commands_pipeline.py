@@ -280,7 +280,7 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
         except:
             pytest.skip("source server not provisioned")
 
-        self.cmd('{} flexible-server georestore -g {} --name {} --source-server {} -l centraluseuap'
+        self.cmd('{} flexible-server geo-restore -g {} --name {} --source-server {} -l centraluseuap'
                 .format(database_engine, resource_group, georestore_server, server),
                 checks=[JMESPathCheck('name', georestore_server),
                         JMESPathCheck('resourceGroup', resource_group),
