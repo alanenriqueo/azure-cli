@@ -272,6 +272,21 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
                         JMESPathCheck('resourceGroup', resource_group)])
 
         self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
+    
+    def _test_flexible_server_georestore(self, database_engine, resource_group, server, georestore_server):
+    
+        try:
+            self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
+        except:
+            pytest.skip("source server not provisioned")
+
+        self.cmd('{} flexible-server georestore -g {} --name {} --source-server {} -l centraluseuap'
+                .format(database_engine, resource_group, georestore_server, server),
+                checks=[JMESPathCheck('name', georestore_server),
+                        JMESPathCheck('resourceGroup', resource_group),
+                        JMESPathCheck('location', 'centraluseuap')])
+
+        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, georestore_server))
 
     def _test_flexible_server_restart(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server restart -g {} -n {}'

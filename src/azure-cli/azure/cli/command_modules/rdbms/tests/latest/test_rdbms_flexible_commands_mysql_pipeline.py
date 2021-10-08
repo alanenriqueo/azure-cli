@@ -40,6 +40,7 @@ RG_NAME_PREFIX = 'clitest.rg'
 SERVER_NAME_MAX_LENGTH = 50
 RG_NAME_MAX_LENGTH = 50
 SOURCE_RG = 'clitest-do-not-delete'
+SOURCE_SERVER_GEORESTORE_PREFIX = 'clitest-server-georestore-mysql-'
 SOURCE_SERVER_PREFIX = 'clitest-server-mysql-'
 SOURCE_HA_SERVER_PREFIX = 'clitest-server-ha-mysql-'
 SOURCE_VNET_SERVER_PREFIX = 'clitest-server-vnet-mysql-'
@@ -58,6 +59,7 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
         self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier1')
         self.server3 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'diff-tier2')
         self.restore_server = 'restore-' + self.server[:55]
+        self.georestore_server = 'georestore-' + self.server[:55]
         self.location = test_location
         _, single_az, _ = get_mysql_list_skus_info(self, test_location)
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
@@ -178,6 +180,13 @@ class MySqlFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtScenar
     @pytest.mark.execution_timeout(7200)
     def test_mysql_flexible_server_restore(self):
         self._test_flexible_server_restore('mysql', SOURCE_RG, SOURCE_SERVER_PREFIX + self.location, self.restore_server)
+    
+
+    @AllowLargeResponse()
+    @pytest.mark.order(18)
+    @pytest.mark.execution_timeout(7200)
+    def test_mysql_flexible_server_restore(self):
+        self._test_flexible_server_georestore('mysql', SOURCE_RG, SOURCE_SERVER_GEORESTORE_PREFIX + self.location, self.georestore_server)
 
 
 class MySqlFlexibleServerIopsMgmtScenarioTest(FlexibleServerIopsMgmtScenarioTest):
