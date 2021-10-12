@@ -60,7 +60,8 @@ class PostgresFlexibleServerRegularMgmtScenarioTest(FlexibleServerRegularMgmtSce
         self.server5 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'zone')
         self.restore_server = 'restore-' + self.server[:55]
         self.location = test_location
-        _, single_az = get_postgres_list_skus_info(self, test_location)
+        region_metadata = get_postgres_list_skus_info(self, test_location)
+        single_az = region_metadata['single_az']
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
             if single_az:
                 f.write("TRUE")
@@ -252,7 +253,8 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
         self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
         self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'ha')
         self.restore_server = 'restore-' + self.server[:55]
-        _, single_az = get_postgres_list_skus_info(self, test_location)
+        region_metadata = get_postgres_list_skus_info(self, test_location)
+        single_az = region_metadata['single_az']
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
             if single_az:
                 f.write("TRUE")
@@ -403,7 +405,8 @@ class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerM
         self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet-ha')
         self.restore_server = 'restore-' + self.server[:55]
         self.restore_server2 = 'restore-' + self.server2[:55]
-        _, single_az = get_postgres_list_skus_info(self, test_location)
+        region_metadata = get_postgres_list_skus_info(self, test_location)
+        single_az = region_metadata['single_az']
         with open(SINGLE_AVAILABILITY_FILE, "w") as f:
             if single_az:
                 f.write("TRUE")
