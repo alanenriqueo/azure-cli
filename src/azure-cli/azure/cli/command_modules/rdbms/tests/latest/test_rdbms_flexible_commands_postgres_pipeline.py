@@ -395,98 +395,6 @@ class PostgresFlexibleServerHighAvailabilityMgmt(FlexibleServerHighAvailabilityM
         self._test_flexible_server_high_availability_restore('postgres', SOURCE_RG, SOURCE_HA_SERVER_PREFIX + self.location, self.restore_server)
 
 
-class PostgresFlexibleServerVnetServerMgmtScenarioTest(FlexibleServerVnetServerMgmtScenarioTest):
-
-    def __init__(self, method_name):
-        super(PostgresFlexibleServerVnetServerMgmtScenarioTest, self).__init__(method_name)
-        self.location = test_location
-        self.resource_group = self.create_random_name(RG_NAME_PREFIX, RG_NAME_MAX_LENGTH)
-        self.server = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet')
-        self.server2 = self.create_random_name(SERVER_NAME_PREFIX, SERVER_NAME_MAX_LENGTH, 'vnet-ha')
-        self.restore_server = 'restore-' + self.server[:55]
-        self.restore_server2 = 'restore-' + self.server2[:55]
-        region_metadata = get_postgres_list_skus_info(self, test_location)
-        single_az = region_metadata['single_az']
-        with open(SINGLE_AVAILABILITY_FILE, "w") as f:
-            if single_az:
-                f.write("TRUE")
-            else:
-                f.write("FALSE")
-
-
-    @pytest.mark.order(1)
-    def test_postgres_flexible_server_vnet_server_prepare(self):
-        self.cmd('az group create --location {} --name {}'.format(test_location, self.resource_group))
-
-    @AllowLargeResponse()
-    @pytest.mark.order(2)
-    @pytest.mark.execution_timeout(7200)
-    def test_postgres_flexible_server_vnet_server_create(self):
-        try:
-            self._test_flexible_server_vnet_server_create('postgres', self.resource_group, self.server)
-            write_succeeded_result(VNET_SERVER_FILE)
-        except:
-            write_failed_result(VNET_SERVER_FILE)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(3)
-    @pytest.mark.execution_timeout(7200)
-    def test_postgres_flexible_server_vnet_ha_server_create(self):
-        with open(SINGLE_AVAILABILITY_FILE, "r") as f:
-            result = f.readline()
-
-            if result == "TRUE":
-                write_failed_result(VNET_HA_SERVER_FILE)
-                pytest.skip("skipping the test due to non supported feature in single availability zone")
-
-        try:
-            self._test_flexible_server_vnet_ha_server_create('postgres', self.resource_group, self.server2)
-            write_succeeded_result(VNET_HA_SERVER_FILE)
-        except:
-            write_succeeded_result(VNET_HA_SERVER_FILE)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(7200)
-    @pytest.mark.usefixtures("vnet_server_provision_check")
-    def test_postgres_flexible_server_vnet_server_update_scale_up(self):
-        self._test_flexible_server_vnet_server_update_scale_up('postgres', self.resource_group, self.server)
-    
-    @AllowLargeResponse()
-    @pytest.mark.order(5)
-    @pytest.mark.execution_timeout(7200)
-    @pytest.mark.usefixtures("single_availability_zone_check")
-    @pytest.mark.usefixtures("vnet_ha_server_provision_check")
-    def test_postgres_flexible_server_vnet_ha_server_update_scale_up(self):
-        self._test_flexible_server_vnet_server_update_scale_up('postgres', self.resource_group, self.server2)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(6)
-    @pytest.mark.usefixtures("vnet_server_provision_check")
-    def test_postgres_flexible_server_vnet_server_delete(self):
-        self._test_flexible_server_vnet_server_delete('postgres', self.resource_group, self.server)
-    
-    @AllowLargeResponse()
-    @pytest.mark.order(7)
-    @pytest.mark.usefixtures("single_availability_zone_check")
-    @pytest.mark.usefixtures("vnet_ha_server_provision_check")
-    def test_postgres_flexible_server_vnet_ha_server_delete(self):
-        self._test_flexible_server_vnet_server_delete('postgres', self.resource_group, self.server2)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(4)
-    @pytest.mark.execution_timeout(5400)
-    def test_postgres_flexible_server_vnet_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('postgres', SOURCE_RG, SOURCE_VNET_SERVER_PREFIX + self.location, self.restore_server)
-
-    @AllowLargeResponse()
-    @pytest.mark.order(8)
-    @pytest.mark.execution_timeout(5400)
-    @pytest.mark.usefixtures("single_availability_zone_check")
-    def test_postgres_flexible_server_vnet_ha_server_restore(self):
-        self._test_flexible_server_vnet_server_restore('postgres', SOURCE_RG, SOURCE_VNET_HA_SERVER_PREFIX +  self.location, self.restore_server2)
-
-
 class PostgresFlexibleServerProxyResourceMgmtScenarioTest(FlexibleServerProxyResourceMgmtScenarioTest):
 
     test_location = test_location
@@ -535,30 +443,6 @@ class PostgresFlexibleServerValidatorScenarioTest(FlexibleServerValidatorScenari
     @ResourceGroupPreparer(location=test_location)
     def test_postgres_flexible_server_mgmt_validator(self, resource_group):
         self._test_mgmt_validator('postgres', resource_group)
-
-
-class PostgresFlexibleServerVnetProvisionScenarioTest(FlexibleServerVnetProvisionScenarioTest):
-
-    test_location = test_location
-
-    @AllowLargeResponse()
-    @live_only()
-    @pytest.mark.execution_timeout(7200)
-    def test_postgres_flexible_server_vnet_provision_supplied_subnetid(self):
-        # Provision a server with supplied Subnet ID that exists, where the subnet is not delegated
-        self._test_flexible_server_vnet_provision_existing_supplied_subnetid('postgres')
-
-    @AllowLargeResponse()
-    @live_only()
-    @pytest.mark.execution_timeout(7200)
-    def test_postgres_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg(self):
-        self._test_flexible_server_vnet_provision_supplied_subnet_id_in_different_rg('postgres')
-
-    @AllowLargeResponse()
-    @live_only()
-    @pytest.mark.execution_timeout(7200)
-    def test_postgres_flexible_server_vnet_provision_private_dns_zone_without_private(self):
-        self._test_flexible_server_vnet_provision_private_dns_zone_without_private('postgres')
 
 
 class PostgresFlexibleServerPublicAccessMgmtScenarioTest(FlexibleServerPublicAccessMgmtScenarioTest):
