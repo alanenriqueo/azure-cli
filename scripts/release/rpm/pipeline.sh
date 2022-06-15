@@ -8,13 +8,15 @@ set -exv
 
 # IMAGE should be one of 'centos7', 'ubi8'
 : "${IMAGE:?IMAGE environment variable not set.}"
+# TAG should be 'centos7' or Fedora version number
+: "${TAG:?TAG environment variable not set.}"
 
 CLI_VERSION=`cat src/azure-cli/azure/cli/__main__.py | grep __version__ | sed s/' '//g | sed s/'__version__='// |  sed s/\"//g`
 
 # Create a container image that includes the source code and a built RPM using this file.
 docker build \
     --target build-env \
-    --build-arg cli_version=${CLI_VERSION} \
+    --build-arg cli_version=${CLI_VERSION} tag=${TAG} \
     -f ./scripts/release/rpm/${IMAGE}.dockerfile \
     -t azure/azure-cli:${IMAGE}-builder \
     .
