@@ -828,12 +828,12 @@ jobs:
        RPM_NAME=azure-cli-$CLI_VERSION-1.${DISTRO}.x86_64.rpm
        RPM_FILE=$SYSTEM_ARTIFACTSDIRECTORY/rpm/$RPM_NAME
 
-       echo "== Test rpm package on ${IMAGE} =="
+       echo "== Test rpm package on $BASE_IMAGE =="
       
-       docker pull $IMAGE
-       docker run --rm -e RPM_NAME=$RPM_NAME -v $SYSTEM_ARTIFACTSDIRECTORY/rpm:/mnt/rpm -v $(pwd):/azure-cli $IMAGE /bin/bash "/azure-cli/scripts/release/rpm/test_rpm_in_docker.sh"
+       docker pull $BASE_IMAGE
+       docker run --rm -e RPM_NAME=$RPM_NAME -v $SYSTEM_ARTIFACTSDIRECTORY/rpm:/mnt/rpm -v $(pwd):/azure-cli $BASE_IMAGE /bin/bash "/azure-cli/scripts/release/rpm/test_rpm_in_docker.sh"
     env:
-      IMAGE: $(image):$(tag)
+      BASE_IMAGE: $(image):$(tag)
       DISTRO: $(distro)
     displayName: 'Test Rpm Package'
 
