@@ -773,6 +773,7 @@ jobs:
       filePath: scripts/release/rpm/pipeline.sh
     env:
       IMAGE: ubi8
+      TAG: 8.4
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'SBOM'
     inputs:
