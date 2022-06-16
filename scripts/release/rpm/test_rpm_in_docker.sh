@@ -8,7 +8,7 @@ export USERNAME=azureuser
 ls /mnt/rpm
 yum --nogpgcheck localinstall /mnt/rpm/$RPM_NAME -y
 
-yum install git gcc python3-devel -y
+yum install git gcc python3-devel findutils -y
 
 ln -s -f /usr/bin/python3 /usr/bin/python
 ln -s -f /usr/bin/pip3 /usr/bin/pip
