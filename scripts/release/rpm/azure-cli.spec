@@ -38,7 +38,7 @@ BuildRequires:  %{python_package}-devel
 %global _python_bytecompile_errors_terminate_build 0
 
 # To get rid of `cannot open linker script file` error on Fedora36. If %_package_note_file is undefined, the
-# linker script will not be generated. Related bug: https://bugzilla.redhat.com/show_bug.cgi?id=2043178
+# linker script will not be generated. Related bug: https://bugzilla.redhat.com/show_bug.cgi?id=2043092
 %undefine _package_note_file
 
 %description
