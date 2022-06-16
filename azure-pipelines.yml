@@ -736,7 +736,7 @@ jobs:
       Fedora36:
         image: fedora
         tag: 36
-        artifact: rpm-fedora35
+        artifact: rpm-fedora36
   steps:
   - task: Bash@3
     displayName: 'Build Rpm Package'
