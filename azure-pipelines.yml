@@ -797,15 +797,15 @@ jobs:
       CentOS7:
         image: centos
         tag: centos7
-        dist: el7
+        distro: el7
       Fedora35:
         image: fedora
         tag: 35
-        dist: fc35
+        distro: fc35
       Fedora36:
         image: fedora
         tag: 36
-        dist: fc36
+        distro: fc36
   steps:
   - task: DownloadPipelineArtifact@1
     displayName: 'Download Metadata'
@@ -825,15 +825,16 @@ jobs:
        set -ex
 
        CLI_VERSION=`cat $SYSTEM_ARTIFACTSDIRECTORY/metadata/version`
-       RPM_NAME=azure-cli-$CLI_VERSION-1.${dist}.x86_64.rpm
+       RPM_NAME=azure-cli-$CLI_VERSION-1.${DISTRO}.x86_64.rpm
        RPM_FILE=$SYSTEM_ARTIFACTSDIRECTORY/rpm/$RPM_NAME
 
-       echo "== Test rpm package on ${image}:${tag} =="
+       echo "== Test rpm package on ${IMAGE} =="
       
-       IMAGE=${image}:${tag}
        docker pull $IMAGE
        docker run --rm -e RPM_NAME=$RPM_NAME -v $SYSTEM_ARTIFACTSDIRECTORY/rpm:/mnt/rpm -v $(pwd):/azure-cli $IMAGE /bin/bash "/azure-cli/scripts/release/rpm/test_rpm_in_docker.sh"
-
+    env:
+      IMAGE: $(image):$(tag)
+      DISTRO: $(distro)
     displayName: 'Test Rpm Package'
 
 - job: BuildDebPackages
