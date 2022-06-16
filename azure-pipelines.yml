@@ -798,14 +798,17 @@ jobs:
         image: centos
         tag: centos7
         distro: el7
+        artifact: yum
       Fedora35:
         image: fedora
         tag: 35
         distro: fc35
+        artifact: rpm-fedora35
       Fedora36:
         image: fedora
         tag: 36
         distro: fc36
+        artifact: rpm-fedora36
   steps:
   - task: DownloadPipelineArtifact@1
     displayName: 'Download Metadata'
@@ -813,13 +816,11 @@ jobs:
       TargetPath: '$(Build.ArtifactStagingDirectory)/metadata'
       artifactName: metadata
 
-
   - task: DownloadPipelineArtifact@1
     displayName: 'Download Build Artifacts'
     inputs:
       TargetPath: '$(Build.ArtifactStagingDirectory)/rpm'
-      artifactName: yum
-
+      artifactName: $(artifact)
 
   - bash: |
        set -ex
