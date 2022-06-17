@@ -193,7 +193,7 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
     def _test_flexible_server_create_select_zone(self, database_engine, resource_group, server):
 
         if database_engine == 'postgres':
-            self.cmd('postgres flexible-server create -g {} -l {} -n {} --zone 1 --public-access none'
+            self.cmd('postgres flexible-server create -g {} -l {} -n {} --public-access none'
                      .format(resource_group, self.location, server))
 
             self.cmd('postgres flexible-server show -g {} -n {}'
@@ -422,7 +422,7 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
             pytest.skip("source server not provisioned")
         restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
         if database_engine == 'postgres':
-            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --zone 2 --restore-time {}'
+            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
                      .format(database_engine, resource_group, restore_server, server, restore_time),
                      checks=[JMESPathCheck('name', restore_server),
                              JMESPathCheck('resourceGroup', resource_group),
