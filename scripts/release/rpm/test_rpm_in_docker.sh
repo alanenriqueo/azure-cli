@@ -5,7 +5,6 @@ set -exv
 
 export USERNAME=azureuser
 
-ls /mnt/rpm
 yum --nogpgcheck localinstall /mnt/rpm/$RPM_NAME -y
 
 yum install git gcc python3-devel findutils -y

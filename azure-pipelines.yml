@@ -823,21 +823,18 @@ jobs:
       artifactName: $(artifact)
 
   - bash: |
-       set -ex
-
-       CLI_VERSION=`cat $SYSTEM_ARTIFACTSDIRECTORY/metadata/version`
-       RPM_NAME=azure-cli-$CLI_VERSION-1.${DISTRO}.x86_64.rpm
-       RPM_FILE=$SYSTEM_ARTIFACTSDIRECTORY/rpm/$RPM_NAME
-       env
-
-       echo "== Test rpm package on $BASE_IMAGE =="
       
-       docker pull $BASE_IMAGE
-       docker run --rm -e RPM_NAME=$RPM_NAME -v $SYSTEM_ARTIFACTSDIRECTORY/rpm:/mnt/rpm -v $(pwd):/azure-cli $BASE_IMAGE /bin/bash "/azure-cli/scripts/release/rpm/test_rpm_in_docker.sh"
-    env:
-      BASE_IMAGE: $(image):$(tag)
-      IMAGE2: $(image):$(tag)
-      DISTRO: $(distro)
+      set -ex
+
+      CLI_VERSION=`cat $SYSTEM_ARTIFACTSDIRECTORY/metadata/version`
+      RPM_NAME=azure-cli-$CLI_VERSION-1.${DISTRO}.x86_64.rpm
+      RPM_FILE=$SYSTEM_ARTIFACTSDIRECTORY/rpm/$RPM_NAME
+      
+      BASE_IMAGE=$IMAGE:$TAG
+      echo "== Test rpm package on $BASE_IMAGE =="
+      
+      docker pull $BASE_IMAGE
+      docker run --rm -e RPM_NAME=$RPM_NAME -v $SYSTEM_ARTIFACTSDIRECTORY/rpm:/mnt/rpm -v $(pwd):/azure-cli $BASE_IMAGE /bin/bash "/azure-cli/scripts/release/rpm/test_rpm_in_docker.sh"
     displayName: 'Test Rpm Package'
 
 - job: BuildDebPackages

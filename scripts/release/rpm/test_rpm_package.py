@@ -7,7 +7,7 @@ import os
 import sys
 import subprocess
 
-python_version = os.path.listdir('/usr/lib64/az/lib/')[0]
+python_version = os.listdir('/usr/lib64/az/lib/')[0]
 root_dir = f'/usr/lib64/az/lib/{python_version}/site-packages/azure/cli/command_modules'
 mod_list = [mod for mod in sorted(os.listdir(root_dir)) if os.path.isdir(os.path.join(root_dir, mod)) and mod != '__pycache__']
 
