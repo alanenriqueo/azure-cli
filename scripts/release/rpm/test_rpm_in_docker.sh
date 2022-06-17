@@ -19,7 +19,7 @@ pip3 install wheel
 ./scripts/ci/build.sh
 
 # From Fedora36, when using `pip install --prefix`with root, the package is installed into `{prefix}/local/lib`.
-# Move installed az modules to make sure tests can be install correctly later
+# Move installed az modules to make sure tests can be installed correctly later
 # Ref https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/developers/Development_Python/
 if python3 -c "import sysconfig; print('local' in sysconfig.get_path('platlib'))" | grep True; then
   mkdir -p /usr/lib64/az/local/

@@ -14,7 +14,7 @@ import subprocess
 if os.path.exists('/usr/lib64/az/local/'):
     python_version = os.listdir('/usr/lib64/az/local/lib/')[0]
     pytest_base_cmd = f'PYTHONPATH=/usr/lib64/az/local/lib/{python_version}/site-packages python3 -m pytest -x -v --boxed -p no:warnings --log-level=WARN'
-    root_dir = f'/usr/lib64/az/loca/lib/{python_version}/site-packages/azure/cli/command_modules'
+    root_dir = f'/usr/lib64/az/local/lib/{python_version}/site-packages/azure/cli/command_modules'
 else:
     python_version = os.listdir('/usr/lib64/az/lib/')[0]
     pytest_base_cmd = f'PYTHONPATH=/usr/lib64/az/lib/{python_version}/site-packages python3 -m pytest -x -v --boxed -p no:warnings --log-level=WARN'
