@@ -6,7 +6,7 @@ set -exv
 
 : "${BUILD_STAGINGDIRECTORY:?BUILD_STAGINGDIRECTORY environment variable not set.}"
 
-# IMAGE should be one of 'centos7', 'ubi8'
+# IMAGE should be one of 'centos7', 'ubi8' or 'fedora'
 : "${IMAGE:?IMAGE environment variable not set.}"
 # TAG should be 'centos7', '8.4' or Fedora version number
 : "${TAG:?TAG environment variable not set.}"
