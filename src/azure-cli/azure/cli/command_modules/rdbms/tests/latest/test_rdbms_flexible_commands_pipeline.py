@@ -265,13 +265,14 @@ class FlexibleServerRegularMgmtScenarioTest(RdbmsScenarioTest):
         except:
             pytest.skip("source server not provisioned")
 
-        restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
-        self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
-                .format(database_engine, resource_group, restore_server, server, restore_time),
-                checks=[JMESPathCheck('name', restore_server),
-                        JMESPathCheck('resourceGroup', resource_group)])
-
-        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
+        try:
+            restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
+            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
+                    .format(database_engine, resource_group, restore_server, server, restore_time),
+                    checks=[JMESPathCheck('name', restore_server),
+                            JMESPathCheck('resourceGroup', resource_group)])
+        finally:
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
     
     def _test_flexible_server_georestore(self, database_engine, resource_group, server, georestore_server):
     
@@ -420,20 +421,22 @@ class FlexibleServerHighAvailabilityMgmt(RdbmsScenarioTest):
             self.cmd('{} flexible-server show -g {} --name {}'.format(database_engine, resource_group, server))
         except:
             pytest.skip("source server not provisioned")
-        restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
-        if database_engine == 'postgres':
-            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
-                     .format(database_engine, resource_group, restore_server, server, restore_time),
-                     checks=[JMESPathCheck('name', restore_server),
-                             JMESPathCheck('resourceGroup', resource_group),
-                             JMESPathCheck('availabilityZone', 2)])
-        else:
-            self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
-                     .format(database_engine, resource_group, restore_server, server, restore_time),
-                     checks=[JMESPathCheck('name', restore_server),
-                             JMESPathCheck('resourceGroup', resource_group)])
-        
-        self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
+
+        try:
+            restore_time = datetime.utcnow().replace(tzinfo=tzutc()).isoformat()
+            if database_engine == 'postgres':
+                self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
+                        .format(database_engine, resource_group, restore_server, server, restore_time),
+                        checks=[JMESPathCheck('name', restore_server),
+                                JMESPathCheck('resourceGroup', resource_group),
+                                JMESPathCheck('availabilityZone', 2)])
+            else:
+                self.cmd('{} flexible-server restore -g {} --name {} --source-server {} --restore-time {}'
+                        .format(database_engine, resource_group, restore_server, server, restore_time),
+                        checks=[JMESPathCheck('name', restore_server),
+                                JMESPathCheck('resourceGroup', resource_group)])
+        finally:
+            self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, restore_server))
 
     def _test_flexible_server_high_availability_delete(self, database_engine, resource_group, server):
         self.cmd('{} flexible-server delete -g {} --name {} --yes'.format(database_engine, resource_group, server))
