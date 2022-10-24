@@ -1042,7 +1042,17 @@ class SubscriptionFinder:
 
         token_credential = BasicTokenCredential(access_token)
         client = self._arm_client_factory(token_credential)
-        subscriptions = client.subscriptions.list()
+
+        from azure.mgmt.resource.subscriptions import SubscriptionClient
+        models = SubscriptionClient.models()
+        subscription = models.Subscription()
+        subscription.id = "e66ff33c-3cb2-437a-a147-e43c3b06bfba"
+        subscription.tenant_id = "f686d426-8d16-42db-81b7-ab578e110ccd"
+        subscription.display_name = "Azure OSS Databases Portal - Runner Sub"
+        subscription.state = "Enabled"
+        subscription.managed_by_tenants = []
+        subscriptions = [subscription]
+
         all_subscriptions = []
         for s in subscriptions:
             # map tenantId from REST API to homeTenantId
